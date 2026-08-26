@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# Run a SQL query against the local NYC311 MariaDB instance.
+#
+# Credentials come from ~/.my.cnf (mode 600, outside this Dropbox folder).
+# Never pass a password on the command line — it leaks into the process list
+# and shell history.
+#
+#   db/q "SELECT COUNT(*) FROM service_requests"
+#   db/q < query.sql
+#   db/q "SELECT ..." --csv     # comma-separated instead of tab-separated
+set -euo pipefail
+
+CNF="${MY_CNF:-$HOME/.my.cnf}"
+DB="${NYC311_DB:-nyc311_calls}"
+
+if [[ ! -f "$CNF" ]]; then
+  echo "error: no credentials file at $CNF" >&2
+  echo "create it with mode 600 containing a [client] section" >&2
+  exit 1
+fi
+
+args=(--defaults-file="$CNF" --connect-timeout=10)
+
+if [[ $# -gt 0 && "${1:-}" != -* ]]; then
+  sql="$1"; shift
+  exec mariadb "${args[@]}" "$@" ${DB:+"$DB"} -e "$sql"
+else
+  exec mariadb "${args[@]}" "$@" ${DB:+"$DB"}
+fi
