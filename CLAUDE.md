@@ -153,15 +153,23 @@ the foreign keys will reject rows carrying unseen values.
 
 ### The nightly tie group — the key operational fact about this feed
 
-NYC's nightly refresh stamps its **entire batch with one identical
-millisecond**. Measured 2026-09-06:
+NYC stamps **~99.9% of each day's updates with one identical millisecond**, in a
+single batch at 01:33 UTC. Measured by night:
 
-    :updated_at = '2026-09-06T01:33:47.468'  ->  550,168 rows
+    2026-09-01   12,705      2026-09-04   11,807
+    2026-09-02   13,739      2026-09-05   16,046
+    2026-09-03   14,504      2026-09-06  550,168   <- 35x outlier
 
-Ordering by a column on which half a million rows tie leaves their order
-arbitrary **and unstable between requests**. Paging that group returns a
-different, overlapping slice every time — verified live: at 5,000 rows/page it
-reported ~1,183 "new" rows on every request, indefinitely.
+Ordering by a column on which rows tie leaves their order arbitrary **and
+unstable between requests**. Paging inside a tie group returns a different,
+overlapping slice every time — verified live at 5,000 rows/page, which reported
+~1,183 "new" rows on every request, indefinitely.
+
+**A normal night's group is 12–16 K rows and fits inside a single 50,000-row
+page**, so the cursor steps over it and `drain_tie_group` never fires. The drain
+is a safety valve, not the everyday path — but 2026-09-06's bulk re-stamp of
+550,168 rows proves the valve is needed, and it happened to be the day we ran
+the backfill. Do not size or schedule this loader on that day's numbers.
 
 Everything else here follows from that.
 
@@ -204,6 +212,28 @@ them out and reports success. This has now happened twice — once from a capped
 2,000-row test that wrote a full watermark, once from the offset row loss above.
 Write the watermark only from data actually committed, and reconcile row counts
 against the API before trusting a load.
+
+### Scheduled daily load
+
+`nyc311_daily_update.sh` in the project root, from the user crontab:
+
+    0 21 * * *  /home/davidtboyd/Dropbox/Agentics/NYC311/nyc311_daily_update.sh
+
+It sources the token (cron does not run the launcher, so without this every
+request silently drops to the throttled pool), takes an exclusive `flock` so a
+slow night cannot overlap the next trigger, runs the loader, then runs
+`reconcile_counts.py` and **fails if the DB is short more than 1,000 rows**.
+Failures go to stderr as well as the log, because cron mails a job's output and
+not its exit code.
+
+Note `reconcile_counts.py` exits 0 even when rows are missing, so the wrapper
+reads the shortfall figure it prints rather than trusting its exit status.
+
+Exit codes: 0 ok, 1 loader failed, 2 rows missing, 3 already running.
+Logs: `output/plato/nyc311_daily_YYYY-MM.log`.
+
+A normal night is 12–16 K rows in a single page. Verified end to end on
+2026-09-06 under a cron-like environment (`env -i`), including the lock.
 
 ### The loader does not delete
 
