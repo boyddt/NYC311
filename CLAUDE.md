@@ -42,8 +42,10 @@ sync when renaming.
 ## Data
 
 NYC 311 data is local, in MariaDB — database `nyc311_calls`, table `NYC311`
-(21,080,417 rows, 13.8 GB, InnoDB), with lookup tables `agencies`,
-`community_boards`, `location_types`, `address_types`.
+(22,356,884 rows as of 2026-09-06, InnoDB), with lookup tables `agencies`,
+`community_boards`, `location_types`, `address_types`. Size reads 16.2 GB
+(12.4 data + 3.9 index), but `information_schema` lags a bulk load until
+`ANALYZE TABLE` runs.
 
 Query through `db/q` from the project root; it reads credentials from
 `~/.my.cnf` (mode 600, deliberately outside this Dropbox-synced folder — never
@@ -51,18 +53,53 @@ put a credentials file in this directory).
 
     db/q "SELECT Borough, COUNT(*) FROM NYC311 GROUP BY Borough"
 
-Known issues, both unresolved:
+Reloaded from scratch on 2026-08-25: the table was dropped and rebuilt with
+`Unique_Key` as PRIMARY KEY and the four date columns typed `datetime`, then
+reimported (21,080,417 rows, 37.7 min). Indexes on `Created_Date`, `Problem`,
+`Borough`, `Status`, `Incident_Zip`.
 
-1. **All four date columns are 100% NULL** (`Created_Date`, `Closed_Date`,
-   `Due_Date`, `Resolution_Action_Updated_Date`). No temporal analysis is
-   possible until the data is reimported with correct date parsing.
-2. **No primary key and no index** on `Unique_Key`, `Problem`, `Borough`, or
-   `Status`, so aggregates on those full-scan 13.8 GB — ~10 s warm since the
-   buffer pool was raised to 20 GB (2026-08-25), but still a full scan.
+Dates are correct — `Created_Date` 100% populated, time of day preserved.
+
+Coverage is **2020-01-01 to 2026-09-05**, not 2010 onward. The 2010 start you
+may see quoted elsewhere is wrong for this dataset; 2020-01-01 is the published
+feed's own minimum, verified against the live API.
+
+Backfilled 2026-09-06 from the Socrata API: the table had been complete only to
+2026-05-08, and 1.27 M rows were pulled to bring it current. See **Data
+currency** below before doing anything time-based.
+
+Lookup tables rebuilt 2026-08-26: `agencies` (22), `community_boards` (78),
+`location_types` (224 — grows as the feed introduces new values),
+`address_types` (7). All four id columns on `NYC311`
+are populated, typed `SMALLINT UNSIGNED`, indexed, and enforced by FOREIGN KEY
+constraints — an orphaned id or a delete of an in-use lookup row is now
+rejected by the database. Every orphan check returned 0.
 
 Server tuning applied 2026-08-25 in `/etc/mysql/mariadb.conf.d/50-server.cnf`:
 buffer pool 128 MB → 20 GB, log file 96 MB → 2 GB, io_capacity 200 → 2000,
 io_capacity_max 2000 → 4000. Full-table aggregate went from ~240 s to ~10 s.
+
+## Data currency
+
+**Verify coverage before any temporal analysis.** Twice now, this table has
+looked complete while its recent tail was empty — and a tail-off in row counts
+reads exactly like a real collapse in complaint volume if you do not check.
+
+Cheap check, always worth running first:
+
+    db/q "SELECT DATE_FORMAT(Created_Date,'%Y-%m') m, COUNT(*) c
+          FROM NYC311 WHERE Created_Date >= '2026-01-01' GROUP BY m ORDER BY m"
+
+Healthy months run ~300–345 K rows (roughly 11 K/day). A month reading in the
+hundreds or low thousands means missing data, **not** a drop in 311 calls. Stop
+and say so rather than reporting the artifact as a finding.
+
+To confirm against the source, compare with the API:
+
+    curl -sS -G https://data.cityofnewyork.us/resource/erm2-nwe9.json \
+      --data-urlencode "\$select=date_trunc_ym(created_date) AS month, count(1)" \
+      --data-urlencode "\$where=created_date >= '2026-01-01'" \
+      --data-urlencode '$group=month' --data-urlencode '$order=month'
 
 ## Source data
 
@@ -94,3 +131,100 @@ Agents do not write into each other's directories or into the project root, and
 they report outputs by full path.
 
 Create `output/<name>/` alongside any new agent added to the roster.
+
+## Update API
+
+Incremental updates come from the Socrata endpoint for dataset `erm2-nwe9`:
+`https://data.cityofnewyork.us/resource/erm2-nwe9.json` (`.csv` also works).
+Maximum page size is 50,000.
+
+The app token lives in `~/.nyc311.env` (mode 600, outside this Dropbox-synced
+folder) and is sourced by `run_claude_NYC311.sh` at launch, so agents started
+that way inherit `NYC_APP_TOKEN`. Source it by hand otherwise. Send it as the
+`X-App-Token` header; never put it on a command line or in this directory.
+Without it, requests fall to a throttled shared pool — measured at ~60 s per
+page versus ~7 s with a token.
+
+Drive incremental loads off the `:updated_at` system field, **not**
+`created_date` — most daily churn is modifications to existing requests, which
+keep their original creation date. Load with `INSERT ... ON DUPLICATE KEY
+UPDATE` on `Unique_Key`, and reconcile the lookup tables *before* the upsert or
+the foreign keys will reject rows carrying unseen values.
+
+### The nightly tie group — the key operational fact about this feed
+
+NYC's nightly refresh stamps its **entire batch with one identical
+millisecond**. Measured 2026-09-06:
+
+    :updated_at = '2026-09-06T01:33:47.468'  ->  550,168 rows
+
+Ordering by a column on which half a million rows tie leaves their order
+arbitrary **and unstable between requests**. Paging that group returns a
+different, overlapping slice every time — verified live: at 5,000 rows/page it
+reported ~1,183 "new" rows on every request, indefinitely.
+
+Everything else here follows from that.
+
+### Never page a large sweep with `$offset`
+
+`$offset` paging over `:updated_at`-ordered results **silently loses rows**, and
+no error is raised. The 2026-09-06 backfill lost 20,566 — 3.7% of that one tie
+group — with the shortfall tracking recency (May −2,117 … August −9,161). Deep
+offsets are also slow: ~7 s at offset 0, 326 s at offset 1 M.
+
+Sweep a large range by **`created_date` windows** instead:
+
+    nyc311_etl.py --sweep-from 2026-01-01 --sweep-to 2026-09-07 [--window-days 1]
+
+`created_date` is immutable, so window membership cannot change mid-run. One
+query per window, no cursor, no offset. A page-full window is halved and
+re-queried, so completeness never depends on page size. Progress is recorded in
+`etl_sweep_progress`, committed with its window's rows, so an interrupted sweep
+resumes correctly; `--resweep` forces windows already recorded. The sweep never
+touches the `:updated_at` watermark. Verified run: 248 windows, 2,698,315 rows,
+1710 s, no splits.
+
+Do not send `$order=unique_key` — it times out against this endpoint (measured
+3× 240 s, versus 0.9 s unordered).
+
+### The daily path
+
+Routine churn still runs off the `:updated_at` watermark, now as a forward
+keyset cursor (inclusive `>=` with `Unique_Key` de-duplication of boundary rows;
+strict `>` drops rows tied on the boundary millisecond). When the cursor lands
+inside a tie group it drains that group by `created_date` windows before
+stepping past it. **This is the everyday path, not a safety valve** — the daily
+run hits a tie group every time.
+
+### A watermark must be earned
+
+Advancing the watermark past rows that were never loaded makes the gap
+permanent: those rows keep their old `:updated_at`, so every later run filters
+them out and reports success. This has now happened twice — once from a capped
+2,000-row test that wrote a full watermark, once from the offset row loss above.
+Write the watermark only from data actually committed, and reconcile row counts
+against the API before trusting a load.
+
+### The loader does not delete
+
+It only upserts, so a request NYC withdraws upstream persists in our table
+indefinitely. As of 2026-09-06 that is 8 rows (e.g. `68278287`, `68316007` —
+closed DOT requests the API no longer serves). Harmless at this scale, but it
+means our count runs slightly *above* the API's, and closing it needs a
+reconciliation pass, not a loader change.
+
+Full reference, with verified volumes and the API-to-schema field mapping:
+`output/plato/2026-08-26_etl_api_reference.md`. Tests for the loader:
+`output/thales/test_nyc311_etl.py` (43, no network or DB required).
+
+### Collation gotcha
+
+MariaDB collates these tables `utf8mb4_general_ci` — case-insensitive. Python
+dicts are not. Any code that maps a text value to a lookup id by building a
+`{name: id}` dict from a query result will silently produce `NULL` ids whenever
+the stored spelling differs in case (`RESIDENTIAL BUILDING` vs `Residential
+Building`). Key such dicts on `.casefold()`, and assert that every non-NULL text
+value resolved to an id rather than letting a NULL through.
+
+The loader is `output/thales/nyc311_etl.py`. Run it with the venv at
+`/home/davidtboyd/PycharmProjects/EAD_venv/.venv/bin/python`.

@@ -1,0 +1,12 @@
+--- step 1: create + populate lookup tables
+    exit 0, 438 s
+agencies	cbs	lts	ats
+22	78	216	7
+--- step 2: MODIFY id columns to SMALLINT UNSIGNED
+    exit 0, 876 s
+--- step 3: single-pass UPDATE, four LEFT JOINs
+    exit 0, 662 s
+--- step 4: indexes + foreign keys
+    exit 0, 554 s
+Table	Op	Msg_type	Msg_text
+nyc311_calls.NYC311	analyze	status	OK

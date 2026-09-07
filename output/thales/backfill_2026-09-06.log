@@ -1,0 +1,242 @@
+=== PRE-STATE 2026-09-06T15:58:49-06:00 ===
+rows_total	oldest	newest
+21084264	2020-01-01 00:00:00	2026-08-22 20:39:42
+location_types
+223
+source	last_updated_at	last_run_at	rows_loaded
+socrata:erm2-nwe9	2026-08-25 01:33:14.244	2026-08-26 15:34:28	2000
+
+=== LOADER: --since 2026-05-08T00:00:00 ===
+2026-09-06 15:58:50,847 INFO    watermark overridden: 2026-05-08 00:00:00
+2026-09-06 15:59:11,241 INFO    page 1: 50000 rows (offset 0)
+2026-09-06 15:59:16,055 INFO    committed 50000 rows (99128 affected), watermark 2026-05-12 01:33:55.615000
+2026-09-06 15:59:40,862 INFO    page 2: 50000 rows (offset 50000)
+2026-09-06 15:59:46,373 INFO    committed 50000 rows (93335 affected), watermark 2026-05-17 01:50:08.103000
+2026-09-06 16:00:12,060 INFO    page 3: 50000 rows (offset 100000)
+2026-09-06 16:00:18,009 INFO    committed 50000 rows (71765 affected), watermark 2026-05-21 01:35:45.705000
+2026-09-06 16:02:17,717 INFO    page 4: 50000 rows (offset 150000)
+2026-09-06 16:02:24,225 INFO    committed 50000 rows (60549 affected), watermark 2026-05-26 01:33:39.052000
+2026-09-06 16:02:39,466 INFO    page 5: 50000 rows (offset 200000)
+2026-09-06 16:02:45,333 INFO    committed 50000 rows (62247 affected), watermark 2026-05-30 01:33:46.270000
+2026-09-06 16:03:12,471 INFO    page 6: 50000 rows (offset 250000)
+2026-09-06 16:03:18,454 INFO    committed 50000 rows (61915 affected), watermark 2026-06-04 01:33:39.179000
+2026-09-06 16:03:40,823 INFO    page 7: 50000 rows (offset 300000)
+2026-09-06 16:03:46,556 INFO    committed 50000 rows (57565 affected), watermark 2026-06-08 01:33:59.732000
+2026-09-06 16:04:02,223 INFO    page 8: 50000 rows (offset 350000)
+2026-09-06 16:04:08,049 INFO    committed 50000 rows (56613 affected), watermark 2026-06-12 01:33:23.414000
+2026-09-06 16:06:08,281 INFO    Run took 437.5 s
+2026-09-06 16:06:08,282 ERROR   unhandled failure: The read operation timed out
+Traceback (most recent call last):
+  File "/home/davidtboyd/Dropbox/Agentics/NYC311/output/thales/nyc311_etl.py", line 554, in main
+    run(args)
+  File "/home/davidtboyd/Dropbox/Agentics/NYC311/output/thales/nyc311_etl.py", line 162, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/davidtboyd/Dropbox/Agentics/NYC311/output/thales/nyc311_etl.py", line 488, in run
+    for page in iter_pages(
+  File "/home/davidtboyd/Dropbox/Agentics/NYC311/output/thales/nyc311_etl.py", line 249, in iter_pages
+    page = fetch_page(params, app_token, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/davidtboyd/Dropbox/Agentics/NYC311/output/thales/nyc311_etl.py", line 184, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/davidtboyd/Dropbox/Agentics/NYC311/output/thales/nyc311_etl.py", line 216, in fetch_page
+    with urllib.request.urlopen(request, timeout=timeout) as response:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 215, in urlopen
+    return opener.open(url, data, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 515, in open
+    response = self._open(req, data)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 532, in _open
+    result = self._call_chain(self.handle_open, protocol, protocol +
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 492, in _call_chain
+    result = func(*args)
+             ^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 1392, in https_open
+    return self.do_open(http.client.HTTPSConnection, req,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 1348, in do_open
+    r = h.getresponse()
+        ^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/http/client.py", line 1457, in getresponse
+    response.begin()
+  File "/usr/lib/python3.12/http/client.py", line 336, in begin
+    version, status, reason = self._read_status()
+                              ^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/http/client.py", line 297, in _read_status
+    line = str(self.fp.readline(_MAXLINE + 1), "iso-8859-1")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/socket.py", line 707, in readinto
+    return self._sock.recv_into(b)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/ssl.py", line 1252, in recv_into
+    return self.read(nbytes, buffer)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/ssl.py", line 1104, in read
+    return self._sslobj.read(len, buffer)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TimeoutError: The read operation timed out
+loader exit code: 2
+
+=== POST-STATE 2026-09-06T16:06:08-06:00 ===
+rows_total	oldest	newest
+21314045	2020-01-01 00:00:00	2026-08-22 20:39:42
+location_types
+223
+source	last_updated_at	last_run_at	rows_loaded
+socrata:erm2-nwe9	2026-06-12 01:33:23.414	2026-09-06 16:04:08	50000
+
+=== RESUME 2026-09-06T16:07:08-06:00 : from stored watermark, --timeout 300 ===
+2026-09-06 16:07:08,687 INFO    stored watermark 2026-06-12 01:33:23.414000, re-reading from 2026-06-12 00:33:23.414000 (overlap 1 h)
+2026-09-06 16:07:32,556 INFO    page 1: 50000 rows (offset 0)
+2026-09-06 16:07:37,873 INFO    committed 50000 rows (50406 affected), watermark 2026-06-16 01:49:37.964000
+2026-09-06 16:07:51,585 INFO    page 2: 50000 rows (offset 50000)
+2026-09-06 16:07:57,079 INFO    committed 50000 rows (53616 affected), watermark 2026-06-20 01:33:25.666000
+2026-09-06 16:08:04,701 INFO    page 3: 50000 rows (offset 100000)
+2026-09-06 16:08:10,592 INFO    committed 50000 rows (54356 affected), watermark 2026-06-24 01:33:07.337000
+2026-09-06 16:09:02,958 INFO    page 4: 50000 rows (offset 150000)
+2026-09-06 16:09:08,473 INFO    committed 50000 rows (51618 affected), watermark 2026-06-29 01:33:53.817000
+2026-09-06 16:09:49,658 INFO    page 5: 50000 rows (offset 200000)
+2026-09-06 16:09:55,519 INFO    committed 50000 rows (54098 affected), watermark 2026-07-03 01:33:38.459000
+2026-09-06 16:10:38,886 INFO    page 6: 50000 rows (offset 250000)
+2026-09-06 16:10:44,581 INFO    committed 50000 rows (52813 affected), watermark 2026-07-07 01:33:56.569000
+2026-09-06 16:11:43,712 INFO    page 7: 50000 rows (offset 300000)
+2026-09-06 16:11:49,598 INFO    committed 50000 rows (53195 affected), watermark 2026-07-12 01:48:59.609000
+2026-09-06 16:12:58,445 INFO    page 8: 50000 rows (offset 350000)
+2026-09-06 16:13:05,177 INFO    committed 50000 rows (51538 affected), watermark 2026-07-16 01:33:43.093000
+2026-09-06 16:13:28,465 INFO    page 9: 50000 rows (offset 400000)
+2026-09-06 16:13:34,536 INFO    committed 50000 rows (52544 affected), watermark 2026-07-20 01:33:26.072000
+2026-09-06 16:13:57,065 INFO    page 10: 50000 rows (offset 450000)
+2026-09-06 16:14:03,762 INFO    committed 50000 rows (53952 affected), watermark 2026-07-24 01:33:26.157000
+2026-09-06 16:14:20,810 INFO    page 11: 50000 rows (offset 500000)
+2026-09-06 16:14:26,912 INFO    committed 50000 rows (51632 affected), watermark 2026-07-29 01:33:36.589000
+2026-09-06 16:14:50,743 INFO    page 12: 50000 rows (offset 550000)
+2026-09-06 16:14:57,603 INFO    committed 50000 rows (52055 affected), watermark 2026-08-02 01:33:55.274000
+2026-09-06 16:15:48,322 INFO    page 13: 50000 rows (offset 600000)
+2026-09-06 16:15:54,347 INFO    committed 50000 rows (49888 affected), watermark 2026-08-06 01:33:08.617000
+2026-09-06 16:16:41,917 INFO    page 14: 50000 rows (offset 650000)
+2026-09-06 16:16:48,259 INFO    committed 50000 rows (49773 affected), watermark 2026-08-11 01:33:11.311000
+2026-09-06 16:17:11,416 INFO    page 15: 50000 rows (offset 700000)
+2026-09-06 16:17:12,753 WARNING location_types: 1 new value(s): ['Outfall']
+2026-09-06 16:17:17,679 INFO    committed 50000 rows (50171 affected), watermark 2026-08-15 01:33:33.174000
+2026-09-06 16:17:24,732 INFO    page 16: 50000 rows (offset 750000)
+2026-09-06 16:17:30,710 INFO    committed 50000 rows (51003 affected), watermark 2026-08-19 01:33:23.553000
+2026-09-06 16:18:22,940 INFO    page 17: 50000 rows (offset 800000)
+2026-09-06 16:18:29,312 INFO    committed 50000 rows (50294 affected), watermark 2026-08-24 01:33:31.386000
+2026-09-06 16:18:41,604 INFO    page 18: 50000 rows (offset 850000)
+2026-09-06 16:18:48,635 INFO    committed 50000 rows (45601 affected), watermark 2026-08-29 01:33:05.833000
+2026-09-06 16:19:17,516 INFO    page 19: 50000 rows (offset 900000)
+2026-09-06 16:19:23,040 INFO    committed 50000 rows (50720 affected), watermark 2026-09-02 01:33:26.674000
+2026-09-06 16:23:07,176 INFO    page 20: 50000 rows (offset 950000)
+2026-09-06 16:23:13,657 INFO    committed 50000 rows (56318 affected), watermark 2026-09-05 01:33:20.486000
+2026-09-06 16:28:39,516 INFO    page 21: 50000 rows (offset 1000000)
+2026-09-06 16:28:46,343 INFO    committed 50000 rows (87583 affected), watermark 2026-09-06 01:33:47.468000
+2026-09-06 16:32:04,947 INFO    page 22: 50000 rows (offset 1050000)
+2026-09-06 16:32:10,084 INFO    committed 50000 rows (92144 affected), watermark 2026-09-06 01:33:47.468000
+2026-09-06 16:35:50,919 INFO    page 23: 50000 rows (offset 1100000)
+2026-09-06 16:35:58,772 INFO    committed 50000 rows (88666 affected), watermark 2026-09-06 01:33:47.468000
+2026-09-06 16:36:44,686 INFO    page 24: 50000 rows (offset 1150000)
+2026-09-06 16:36:49,409 INFO    committed 50000 rows (51271 affected), watermark 2026-09-06 01:33:47.468000
+2026-09-06 16:40:32,873 INFO    page 25: 50000 rows (offset 1200000)
+2026-09-06 16:40:37,312 INFO    committed 50000 rows (85612 affected), watermark 2026-09-06 01:33:47.468000
+2026-09-06 16:45:37,603 INFO    Run took 2308.9 s
+2026-09-06 16:45:37,603 ERROR   unhandled failure: The read operation timed out
+Traceback (most recent call last):
+  File "/home/davidtboyd/Dropbox/Agentics/NYC311/output/thales/nyc311_etl.py", line 554, in main
+    run(args)
+  File "/home/davidtboyd/Dropbox/Agentics/NYC311/output/thales/nyc311_etl.py", line 162, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/davidtboyd/Dropbox/Agentics/NYC311/output/thales/nyc311_etl.py", line 488, in run
+    for page in iter_pages(
+  File "/home/davidtboyd/Dropbox/Agentics/NYC311/output/thales/nyc311_etl.py", line 249, in iter_pages
+    page = fetch_page(params, app_token, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/davidtboyd/Dropbox/Agentics/NYC311/output/thales/nyc311_etl.py", line 184, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/davidtboyd/Dropbox/Agentics/NYC311/output/thales/nyc311_etl.py", line 216, in fetch_page
+    with urllib.request.urlopen(request, timeout=timeout) as response:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 215, in urlopen
+    return opener.open(url, data, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 515, in open
+    response = self._open(req, data)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 532, in _open
+    result = self._call_chain(self.handle_open, protocol, protocol +
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 492, in _call_chain
+    result = func(*args)
+             ^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 1392, in https_open
+    return self.do_open(http.client.HTTPSConnection, req,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 1348, in do_open
+    r = h.getresponse()
+        ^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/http/client.py", line 1457, in getresponse
+    response.begin()
+  File "/usr/lib/python3.12/http/client.py", line 336, in begin
+    version, status, reason = self._read_status()
+                              ^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/http/client.py", line 297, in _read_status
+    line = str(self.fp.readline(_MAXLINE + 1), "iso-8859-1")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/socket.py", line 707, in readinto
+    return self._sock.recv_into(b)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/ssl.py", line 1252, in recv_into
+    return self.read(nbytes, buffer)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/ssl.py", line 1104, in read
+    return self._sslobj.read(len, buffer)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TimeoutError: The read operation timed out
+loader exit code: 2
+
+=== POST-STATE 2026-09-06T16:45:37-06:00 ===
+rows_total	newest
+22249798	2026-09-04 02:03:47
+source	last_updated_at	last_run_at	rows_loaded
+socrata:erm2-nwe9	2026-09-06 01:33:47.468	2026-09-06 16:40:37	50000
+
+=== FINAL PASS 2026-09-06T16:47:04-06:00 : from watermark, --timeout 300 ===
+2026-09-06 16:47:04,601 INFO    stored watermark 2026-09-06 01:33:47.468000, re-reading from 2026-09-06 00:33:47.468000 (overlap 1 h)
+2026-09-06 16:47:12,432 INFO    page 1: 50000 rows (offset 0)
+2026-09-06 16:47:16,379 INFO    committed 50000 rows (3513 affected), watermark 2026-09-06 01:33:47.468000
+2026-09-06 16:47:25,654 INFO    page 2: 50000 rows (offset 50000)
+2026-09-06 16:47:29,618 INFO    committed 50000 rows (3790 affected), watermark 2026-09-06 01:33:47.468000
+2026-09-06 16:48:01,064 INFO    page 3: 50000 rows (offset 100000)
+2026-09-06 16:48:05,164 INFO    committed 50000 rows (0 affected), watermark 2026-09-06 01:33:47.468000
+2026-09-06 16:48:21,521 INFO    page 4: 50000 rows (offset 150000)
+2026-09-06 16:48:25,847 INFO    committed 50000 rows (82218 affected), watermark 2026-09-06 01:33:47.468000
+2026-09-06 16:48:41,874 INFO    page 5: 50000 rows (offset 200000)
+2026-09-06 16:48:46,063 INFO    committed 50000 rows (3668 affected), watermark 2026-09-06 01:33:47.468000
+2026-09-06 16:48:58,824 INFO    page 6: 50000 rows (offset 250000)
+2026-09-06 16:49:03,119 INFO    committed 50000 rows (13375 affected), watermark 2026-09-06 01:33:47.468000
+2026-09-06 16:49:10,125 INFO    page 7: 50000 rows (offset 300000)
+2026-09-06 16:49:14,525 INFO    committed 50000 rows (57444 affected), watermark 2026-09-06 01:33:47.468000
+2026-09-06 16:49:29,181 INFO    page 8: 50000 rows (offset 350000)
+2026-09-06 16:49:34,007 INFO    committed 50000 rows (64000 affected), watermark 2026-09-06 01:33:47.468000
+2026-09-06 16:49:47,752 INFO    page 9: 50000 rows (offset 400000)
+2026-09-06 16:49:53,166 INFO    committed 50000 rows (40600 affected), watermark 2026-09-06 01:33:47.468000
+2026-09-06 16:50:04,223 INFO    page 10: 50000 rows (offset 450000)
+2026-09-06 16:50:09,318 INFO    committed 50000 rows (42889 affected), watermark 2026-09-06 01:33:47.468000
+2026-09-06 16:50:57,500 INFO    page 11: 50000 rows (offset 500000)
+2026-09-06 16:51:02,188 INFO    committed 50000 rows (25231 affected), watermark 2026-09-06 01:33:47.468000
+2026-09-06 16:51:10,965 INFO    page 12: 11120 rows (offset 550000)
+2026-09-06 16:51:12,304 INFO    committed 11120 rows (11042 affected), watermark 2026-09-06 01:39:31.178000
+2026-09-06 16:51:12,305 INFO    run complete: 561120 rows processed, watermark 2026-09-06 01:39:31.178000
+2026-09-06 16:51:12,362 INFO    Run took 247.8 s
+loader exit code: 0
+
+=== POST-STATE 2026-09-06T16:51:12-06:00 ===
+rows_total	newest
+22356884	2026-09-05 01:50:33
+source	last_updated_at	last_run_at	rows_loaded
+socrata:erm2-nwe9	2026-09-06 01:39:31.178	2026-09-06 16:51:12	11120

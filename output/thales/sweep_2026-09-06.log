@@ -1,0 +1,749 @@
+=== RECOVERY SWEEP 2026-09-06T17:46:49-06:00 : created_date 2026-01-01 .. 2026-09-07, 1-day windows ===
+2026-09-06 17:46:49,785 INFO    1 window(s) already committed; use --resweep to redo them
+2026-09-06 17:46:56,540 INFO    window 2026-01-01 00:00:00 .. 2026-01-02 00:00:00: 8291 rows
+2026-09-06 17:46:57,213 INFO      upserted 8291 rows (11464 affected)
+2026-09-06 17:46:57,225 INFO    window 2026-01-01 00:00:00 .. 2026-01-02 00:00:00 committed (8291 rows; 1 windows, 8291 rows this run)
+2026-09-06 17:47:04,731 INFO    window 2026-01-02 00:00:00 .. 2026-01-03 00:00:00: 10379 rows
+2026-09-06 17:47:05,556 INFO      upserted 10379 rows (14404 affected)
+2026-09-06 17:47:05,566 INFO    window 2026-01-02 00:00:00 .. 2026-01-03 00:00:00 committed (10379 rows; 2 windows, 18670 rows this run)
+2026-09-06 17:47:07,682 INFO    window 2026-01-03 00:00:00 .. 2026-01-04 00:00:00: 8829 rows
+2026-09-06 17:47:08,414 INFO      upserted 8829 rows (16328 affected)
+2026-09-06 17:47:08,428 INFO    window 2026-01-03 00:00:00 .. 2026-01-04 00:00:00 committed (8829 rows; 3 windows, 27499 rows this run)
+2026-09-06 17:47:10,972 INFO    window 2026-01-04 00:00:00 .. 2026-01-05 00:00:00: 8594 rows
+2026-09-06 17:47:11,743 INFO      upserted 8594 rows (15876 affected)
+2026-09-06 17:47:11,755 INFO    window 2026-01-04 00:00:00 .. 2026-01-05 00:00:00 committed (8594 rows; 4 windows, 36093 rows this run)
+2026-09-06 17:47:16,568 INFO    window 2026-01-05 00:00:00 .. 2026-01-06 00:00:00: 11415 rows
+2026-09-06 17:47:17,525 INFO      upserted 11415 rows (20932 affected)
+2026-09-06 17:47:17,543 INFO    window 2026-01-05 00:00:00 .. 2026-01-06 00:00:00 committed (11415 rows; 5 windows, 47508 rows this run)
+2026-09-06 17:47:21,554 INFO    window 2026-01-06 00:00:00 .. 2026-01-07 00:00:00: 10386 rows
+2026-09-06 17:47:22,444 INFO      upserted 10386 rows (19128 affected)
+2026-09-06 17:47:22,464 INFO    window 2026-01-06 00:00:00 .. 2026-01-07 00:00:00 committed (10386 rows; 6 windows, 57894 rows this run)
+2026-09-06 17:47:25,843 INFO    window 2026-01-07 00:00:00 .. 2026-01-08 00:00:00: 10474 rows
+2026-09-06 17:47:26,740 INFO      upserted 10474 rows (19534 affected)
+2026-09-06 17:47:26,753 INFO    window 2026-01-07 00:00:00 .. 2026-01-08 00:00:00 committed (10474 rows; 7 windows, 68368 rows this run)
+2026-09-06 17:47:29,241 INFO    window 2026-01-08 00:00:00 .. 2026-01-09 00:00:00: 10529 rows
+2026-09-06 17:47:30,164 INFO      upserted 10529 rows (19794 affected)
+2026-09-06 17:47:30,180 INFO    window 2026-01-08 00:00:00 .. 2026-01-09 00:00:00 committed (10529 rows; 8 windows, 78897 rows this run)
+2026-09-06 17:47:33,789 INFO    window 2026-01-09 00:00:00 .. 2026-01-10 00:00:00: 9859 rows
+2026-09-06 17:47:34,689 INFO      upserted 9859 rows (18486 affected)
+2026-09-06 17:47:34,704 INFO    window 2026-01-09 00:00:00 .. 2026-01-10 00:00:00 committed (9859 rows; 9 windows, 88756 rows this run)
+2026-09-06 17:47:37,945 INFO    window 2026-01-10 00:00:00 .. 2026-01-11 00:00:00: 8182 rows
+2026-09-06 17:47:38,682 INFO      upserted 8182 rows (15402 affected)
+2026-09-06 17:47:38,692 INFO    window 2026-01-10 00:00:00 .. 2026-01-11 00:00:00 committed (8182 rows; 10 windows, 96938 rows this run)
+2026-09-06 17:47:42,646 INFO    window 2026-01-11 00:00:00 .. 2026-01-12 00:00:00: 8519 rows
+2026-09-06 17:47:43,420 INFO      upserted 8519 rows (16110 affected)
+2026-09-06 17:47:43,436 INFO    window 2026-01-11 00:00:00 .. 2026-01-12 00:00:00 committed (8519 rows; 11 windows, 105457 rows this run)
+2026-09-06 17:47:47,814 INFO    window 2026-01-12 00:00:00 .. 2026-01-13 00:00:00: 10977 rows
+2026-09-06 17:47:48,770 INFO      upserted 10977 rows (20380 affected)
+2026-09-06 17:47:48,787 INFO    window 2026-01-12 00:00:00 .. 2026-01-13 00:00:00 committed (10977 rows; 12 windows, 116434 rows this run)
+2026-09-06 17:47:52,191 INFO    window 2026-01-13 00:00:00 .. 2026-01-14 00:00:00: 10110 rows
+2026-09-06 17:47:53,077 INFO      upserted 10110 rows (18742 affected)
+2026-09-06 17:47:53,092 INFO    window 2026-01-13 00:00:00 .. 2026-01-14 00:00:00 committed (10110 rows; 13 windows, 126544 rows this run)
+2026-09-06 17:47:57,070 INFO    window 2026-01-14 00:00:00 .. 2026-01-15 00:00:00: 9738 rows
+2026-09-06 17:47:57,986 INFO      upserted 9738 rows (18128 affected)
+2026-09-06 17:47:57,999 INFO    window 2026-01-14 00:00:00 .. 2026-01-15 00:00:00 committed (9738 rows; 14 windows, 136282 rows this run)
+2026-09-06 17:48:00,227 INFO    window 2026-01-15 00:00:00 .. 2026-01-16 00:00:00: 10016 rows
+2026-09-06 17:48:01,121 INFO      upserted 10016 rows (18716 affected)
+2026-09-06 17:48:01,136 INFO    window 2026-01-15 00:00:00 .. 2026-01-16 00:00:00 committed (10016 rows; 15 windows, 146298 rows this run)
+2026-09-06 17:48:03,168 INFO    window 2026-01-16 00:00:00 .. 2026-01-17 00:00:00: 10544 rows
+2026-09-06 17:48:04,109 INFO      upserted 10544 rows (19280 affected)
+2026-09-06 17:48:04,123 INFO    window 2026-01-16 00:00:00 .. 2026-01-17 00:00:00 committed (10544 rows; 16 windows, 156842 rows this run)
+2026-09-06 17:48:06,878 INFO    window 2026-01-17 00:00:00 .. 2026-01-18 00:00:00: 7933 rows
+2026-09-06 17:48:07,579 INFO      upserted 7933 rows (14824 affected)
+2026-09-06 17:48:07,590 INFO    window 2026-01-17 00:00:00 .. 2026-01-18 00:00:00 committed (7933 rows; 17 windows, 164775 rows this run)
+2026-09-06 17:48:09,474 INFO    window 2026-01-18 00:00:00 .. 2026-01-19 00:00:00: 7334 rows
+2026-09-06 17:48:10,145 INFO      upserted 7334 rows (13642 affected)
+2026-09-06 17:48:10,153 INFO    window 2026-01-18 00:00:00 .. 2026-01-19 00:00:00 committed (7334 rows; 18 windows, 172109 rows this run)
+2026-09-06 17:48:13,746 INFO    window 2026-01-19 00:00:00 .. 2026-01-20 00:00:00: 9691 rows
+2026-09-06 17:48:14,626 INFO      upserted 9691 rows (17942 affected)
+2026-09-06 17:48:14,639 INFO    window 2026-01-19 00:00:00 .. 2026-01-20 00:00:00 committed (9691 rows; 19 windows, 181800 rows this run)
+2026-09-06 17:48:19,251 INFO    window 2026-01-20 00:00:00 .. 2026-01-21 00:00:00: 12478 rows
+2026-09-06 17:48:20,312 INFO      upserted 12478 rows (22806 affected)
+2026-09-06 17:48:20,330 INFO    window 2026-01-20 00:00:00 .. 2026-01-21 00:00:00 committed (12478 rows; 20 windows, 194278 rows this run)
+2026-09-06 17:48:24,632 INFO    window 2026-01-21 00:00:00 .. 2026-01-22 00:00:00: 12186 rows
+2026-09-06 17:48:25,694 INFO      upserted 12186 rows (20966 affected)
+2026-09-06 17:48:25,706 INFO    window 2026-01-21 00:00:00 .. 2026-01-22 00:00:00 committed (12186 rows; 21 windows, 206464 rows this run)
+2026-09-06 17:48:28,202 INFO    window 2026-01-22 00:00:00 .. 2026-01-23 00:00:00: 10783 rows
+2026-09-06 17:48:29,184 INFO      upserted 10783 rows (19584 affected)
+2026-09-06 17:48:29,195 INFO    window 2026-01-22 00:00:00 .. 2026-01-23 00:00:00 committed (10783 rows; 22 windows, 217247 rows this run)
+2026-09-06 17:48:33,228 INFO    window 2026-01-23 00:00:00 .. 2026-01-24 00:00:00: 10741 rows
+2026-09-06 17:48:34,217 INFO      upserted 10741 rows (19796 affected)
+2026-09-06 17:48:34,230 INFO    window 2026-01-23 00:00:00 .. 2026-01-24 00:00:00 committed (10741 rows; 23 windows, 227988 rows this run)
+2026-09-06 17:48:41,334 INFO    window 2026-01-24 00:00:00 .. 2026-01-25 00:00:00: 13022 rows
+2026-09-06 17:48:42,480 INFO      upserted 13022 rows (23718 affected)
+2026-09-06 17:48:42,494 INFO    window 2026-01-24 00:00:00 .. 2026-01-25 00:00:00 committed (13022 rows; 24 windows, 241010 rows this run)
+2026-09-06 17:48:44,461 INFO    window 2026-01-25 00:00:00 .. 2026-01-26 00:00:00: 11989 rows
+2026-09-06 17:48:45,501 INFO      upserted 11989 rows (21190 affected)
+2026-09-06 17:48:45,515 INFO    window 2026-01-25 00:00:00 .. 2026-01-26 00:00:00 committed (11989 rows; 25 windows, 252999 rows this run)
+2026-09-06 17:48:48,653 INFO    window 2026-01-26 00:00:00 .. 2026-01-27 00:00:00: 15727 rows
+2026-09-06 17:48:50,064 INFO      upserted 15727 rows (28254 affected)
+2026-09-06 17:48:50,081 INFO    window 2026-01-26 00:00:00 .. 2026-01-27 00:00:00 committed (15727 rows; 26 windows, 268726 rows this run)
+2026-09-06 17:48:57,302 INFO    window 2026-01-27 00:00:00 .. 2026-01-28 00:00:00: 19225 rows
+2026-09-06 17:48:58,946 INFO      upserted 19225 rows (35206 affected)
+2026-09-06 17:48:58,961 INFO    window 2026-01-27 00:00:00 .. 2026-01-28 00:00:00 committed (19225 rows; 27 windows, 287951 rows this run)
+2026-09-06 17:49:02,582 INFO    window 2026-01-28 00:00:00 .. 2026-01-29 00:00:00: 16982 rows
+2026-09-06 17:49:04,059 INFO      upserted 16982 rows (25470 affected)
+2026-09-06 17:49:04,076 INFO    window 2026-01-28 00:00:00 .. 2026-01-29 00:00:00 committed (16982 rows; 28 windows, 304933 rows this run)
+2026-09-06 17:49:09,916 INFO    window 2026-01-29 00:00:00 .. 2026-01-30 00:00:00: 15361 rows
+2026-09-06 17:49:11,294 INFO      upserted 15361 rows (24150 affected)
+2026-09-06 17:49:11,305 INFO    window 2026-01-29 00:00:00 .. 2026-01-30 00:00:00 committed (15361 rows; 29 windows, 320294 rows this run)
+2026-09-06 17:49:20,501 INFO    window 2026-01-30 00:00:00 .. 2026-01-31 00:00:00: 15448 rows
+2026-09-06 17:49:21,883 INFO      upserted 15448 rows (25224 affected)
+2026-09-06 17:49:21,900 INFO    window 2026-01-30 00:00:00 .. 2026-01-31 00:00:00 committed (15448 rows; 30 windows, 335742 rows this run)
+2026-09-06 17:49:27,855 INFO    window 2026-01-31 00:00:00 .. 2026-02-01 00:00:00: 12769 rows
+2026-09-06 17:49:29,001 INFO      upserted 12769 rows (22698 affected)
+2026-09-06 17:49:29,017 INFO    window 2026-01-31 00:00:00 .. 2026-02-01 00:00:00 committed (12769 rows; 31 windows, 348511 rows this run)
+2026-09-06 17:49:33,200 INFO    window 2026-02-01 00:00:00 .. 2026-02-02 00:00:00: 15684 rows
+2026-09-06 17:49:34,643 INFO      upserted 15684 rows (28708 affected)
+2026-09-06 17:49:34,663 INFO    window 2026-02-01 00:00:00 .. 2026-02-02 00:00:00 committed (15684 rows; 32 windows, 364195 rows this run)
+2026-09-06 17:49:41,407 INFO    window 2026-02-02 00:00:00 .. 2026-02-03 00:00:00: 14173 rows
+2026-09-06 17:49:42,660 INFO      upserted 14173 rows (27136 affected)
+2026-09-06 17:49:42,673 INFO    window 2026-02-02 00:00:00 .. 2026-02-03 00:00:00 committed (14173 rows; 33 windows, 378368 rows this run)
+2026-09-06 17:49:47,741 INFO    window 2026-02-03 00:00:00 .. 2026-02-04 00:00:00: 12893 rows
+2026-09-06 17:49:48,904 INFO      upserted 12893 rows (24808 affected)
+2026-09-06 17:49:48,915 INFO    window 2026-02-03 00:00:00 .. 2026-02-04 00:00:00 committed (12893 rows; 34 windows, 391261 rows this run)
+2026-09-06 17:49:54,715 INFO    window 2026-02-04 00:00:00 .. 2026-02-05 00:00:00: 11831 rows
+2026-09-06 17:49:55,791 INFO      upserted 11831 rows (22754 affected)
+2026-09-06 17:49:55,801 INFO    window 2026-02-04 00:00:00 .. 2026-02-05 00:00:00 committed (11831 rows; 35 windows, 403092 rows this run)
+2026-09-06 17:50:03,022 INFO    window 2026-02-05 00:00:00 .. 2026-02-06 00:00:00: 11589 rows
+2026-09-06 17:50:04,098 INFO      upserted 11589 rows (22254 affected)
+2026-09-06 17:50:04,114 INFO    window 2026-02-05 00:00:00 .. 2026-02-06 00:00:00 committed (11589 rows; 36 windows, 414681 rows this run)
+2026-09-06 17:50:10,175 INFO    window 2026-02-06 00:00:00 .. 2026-02-07 00:00:00: 10826 rows
+2026-09-06 17:50:11,146 INFO      upserted 10826 rows (20804 affected)
+2026-09-06 17:50:11,166 INFO    window 2026-02-06 00:00:00 .. 2026-02-07 00:00:00 committed (10826 rows; 37 windows, 425507 rows this run)
+2026-09-06 17:50:18,534 INFO    window 2026-02-07 00:00:00 .. 2026-02-08 00:00:00: 11153 rows
+2026-09-06 17:50:19,547 INFO      upserted 11153 rows (21572 affected)
+2026-09-06 17:50:19,559 INFO    window 2026-02-07 00:00:00 .. 2026-02-08 00:00:00 committed (11153 rows; 38 windows, 436660 rows this run)
+2026-09-06 17:50:26,843 INFO    window 2026-02-08 00:00:00 .. 2026-02-09 00:00:00: 14514 rows
+2026-09-06 17:50:28,127 INFO      upserted 14514 rows (28148 affected)
+2026-09-06 17:50:28,140 INFO    window 2026-02-08 00:00:00 .. 2026-02-09 00:00:00 committed (14514 rows; 39 windows, 451174 rows this run)
+2026-09-06 17:50:38,761 INFO    window 2026-02-09 00:00:00 .. 2026-02-10 00:00:00: 14842 rows
+2026-09-06 17:50:40,136 INFO      upserted 14842 rows (28264 affected)
+2026-09-06 17:50:40,149 INFO    window 2026-02-09 00:00:00 .. 2026-02-10 00:00:00 committed (14842 rows; 40 windows, 466016 rows this run)
+2026-09-06 17:50:47,934 INFO    window 2026-02-10 00:00:00 .. 2026-02-11 00:00:00: 12900 rows
+2026-09-06 17:50:49,104 INFO      upserted 12900 rows (24802 affected)
+2026-09-06 17:50:49,116 INFO    window 2026-02-10 00:00:00 .. 2026-02-11 00:00:00 committed (12900 rows; 41 windows, 478916 rows this run)
+2026-09-06 17:50:56,812 INFO    window 2026-02-11 00:00:00 .. 2026-02-12 00:00:00: 11509 rows
+2026-09-06 17:50:57,873 INFO      upserted 11509 rows (22132 affected)
+2026-09-06 17:50:57,883 INFO    window 2026-02-11 00:00:00 .. 2026-02-12 00:00:00 committed (11509 rows; 42 windows, 490425 rows this run)
+2026-09-06 17:51:07,254 INFO    window 2026-02-12 00:00:00 .. 2026-02-13 00:00:00: 10939 rows
+2026-09-06 17:51:08,275 INFO      upserted 10939 rows (21014 affected)
+2026-09-06 17:51:08,287 INFO    window 2026-02-12 00:00:00 .. 2026-02-13 00:00:00 committed (10939 rows; 43 windows, 501364 rows this run)
+2026-09-06 17:51:14,987 INFO    window 2026-02-13 00:00:00 .. 2026-02-14 00:00:00: 10573 rows
+2026-09-06 17:51:15,952 INFO      upserted 10573 rows (20370 affected)
+2026-09-06 17:51:15,965 INFO    window 2026-02-13 00:00:00 .. 2026-02-14 00:00:00 committed (10573 rows; 44 windows, 511937 rows this run)
+2026-09-06 17:51:21,140 INFO    window 2026-02-14 00:00:00 .. 2026-02-15 00:00:00: 8935 rows
+2026-09-06 17:51:21,952 INFO      upserted 8935 rows (17312 affected)
+2026-09-06 17:51:21,967 INFO    window 2026-02-14 00:00:00 .. 2026-02-15 00:00:00 committed (8935 rows; 45 windows, 520872 rows this run)
+2026-09-06 17:51:34,037 INFO    window 2026-02-15 00:00:00 .. 2026-02-16 00:00:00: 8890 rows
+2026-09-06 17:51:34,842 INFO      upserted 8890 rows (17260 affected)
+2026-09-06 17:51:34,853 INFO    window 2026-02-15 00:00:00 .. 2026-02-16 00:00:00 committed (8890 rows; 46 windows, 529762 rows this run)
+2026-09-06 17:51:40,200 INFO    window 2026-02-16 00:00:00 .. 2026-02-17 00:00:00: 9182 rows
+2026-09-06 17:51:41,031 INFO      upserted 9182 rows (17696 affected)
+2026-09-06 17:51:41,041 INFO    window 2026-02-16 00:00:00 .. 2026-02-17 00:00:00 committed (9182 rows; 47 windows, 538944 rows this run)
+2026-09-06 17:51:47,463 INFO    window 2026-02-17 00:00:00 .. 2026-02-18 00:00:00: 10146 rows
+2026-09-06 17:51:48,399 INFO      upserted 10146 rows (19314 affected)
+2026-09-06 17:51:48,412 INFO    window 2026-02-17 00:00:00 .. 2026-02-18 00:00:00 committed (10146 rows; 48 windows, 549090 rows this run)
+2026-09-06 17:52:00,435 INFO    window 2026-02-18 00:00:00 .. 2026-02-19 00:00:00: 10015 rows
+2026-09-06 17:52:01,333 INFO      upserted 10015 rows (19088 affected)
+2026-09-06 17:52:01,345 INFO    window 2026-02-18 00:00:00 .. 2026-02-19 00:00:00 committed (10015 rows; 49 windows, 559105 rows this run)
+2026-09-06 17:52:10,425 INFO    window 2026-02-19 00:00:00 .. 2026-02-20 00:00:00: 10761 rows
+2026-09-06 17:52:11,401 INFO      upserted 10761 rows (20650 affected)
+2026-09-06 17:52:11,414 INFO    window 2026-02-19 00:00:00 .. 2026-02-20 00:00:00 committed (10761 rows; 50 windows, 569866 rows this run)
+2026-09-06 17:52:21,661 INFO    window 2026-02-20 00:00:00 .. 2026-02-21 00:00:00: 10405 rows
+2026-09-06 17:52:22,612 INFO      upserted 10405 rows (19918 affected)
+2026-09-06 17:52:22,627 INFO    window 2026-02-20 00:00:00 .. 2026-02-21 00:00:00 committed (10405 rows; 51 windows, 580271 rows this run)
+2026-09-06 17:52:27,030 INFO    window 2026-02-21 00:00:00 .. 2026-02-22 00:00:00: 9523 rows
+2026-09-06 17:52:27,916 INFO      upserted 9523 rows (18418 affected)
+2026-09-06 17:52:27,927 INFO    window 2026-02-21 00:00:00 .. 2026-02-22 00:00:00 committed (9523 rows; 52 windows, 589794 rows this run)
+2026-09-06 17:52:33,802 INFO    window 2026-02-22 00:00:00 .. 2026-02-23 00:00:00: 8888 rows
+2026-09-06 17:52:34,650 INFO      upserted 8888 rows (17230 affected)
+2026-09-06 17:52:34,665 INFO    window 2026-02-22 00:00:00 .. 2026-02-23 00:00:00 committed (8888 rows; 53 windows, 598682 rows this run)
+2026-09-06 17:52:43,300 INFO    window 2026-02-23 00:00:00 .. 2026-02-24 00:00:00: 15424 rows
+2026-09-06 17:52:44,626 INFO      upserted 15424 rows (30038 affected)
+2026-09-06 17:52:44,645 INFO    window 2026-02-23 00:00:00 .. 2026-02-24 00:00:00 committed (15424 rows; 54 windows, 614106 rows this run)
+2026-09-06 17:52:59,504 INFO    window 2026-02-24 00:00:00 .. 2026-02-25 00:00:00: 22805 rows
+2026-09-06 17:53:01,432 INFO      upserted 22805 rows (44334 affected)
+2026-09-06 17:53:01,448 INFO    window 2026-02-24 00:00:00 .. 2026-02-25 00:00:00 committed (22805 rows; 55 windows, 636911 rows this run)
+2026-09-06 17:53:09,486 INFO    window 2026-02-25 00:00:00 .. 2026-02-26 00:00:00: 13703 rows
+2026-09-06 17:53:10,779 INFO      upserted 13703 rows (26098 affected)
+2026-09-06 17:53:10,803 INFO    window 2026-02-25 00:00:00 .. 2026-02-26 00:00:00 committed (13703 rows; 56 windows, 650614 rows this run)
+2026-09-06 17:53:20,840 INFO    window 2026-02-26 00:00:00 .. 2026-02-27 00:00:00: 12186 rows
+2026-09-06 17:53:21,943 INFO      upserted 12186 rows (23096 affected)
+2026-09-06 17:53:21,974 INFO    window 2026-02-26 00:00:00 .. 2026-02-27 00:00:00 committed (12186 rows; 57 windows, 662800 rows this run)
+2026-09-06 17:53:28,710 INFO    window 2026-02-27 00:00:00 .. 2026-02-28 00:00:00: 11040 rows
+2026-09-06 17:53:29,710 INFO      upserted 11040 rows (20800 affected)
+2026-09-06 17:53:29,726 INFO    window 2026-02-27 00:00:00 .. 2026-02-28 00:00:00 committed (11040 rows; 58 windows, 673840 rows this run)
+2026-09-06 17:53:38,038 INFO    window 2026-02-28 00:00:00 .. 2026-03-01 00:00:00: 9361 rows
+2026-09-06 17:53:38,899 INFO      upserted 9361 rows (18012 affected)
+2026-09-06 17:53:38,915 INFO    window 2026-02-28 00:00:00 .. 2026-03-01 00:00:00 committed (9361 rows; 59 windows, 683201 rows this run)
+2026-09-06 17:53:46,244 INFO    window 2026-03-01 00:00:00 .. 2026-03-02 00:00:00: 9139 rows
+2026-09-06 17:53:47,096 INFO      upserted 9139 rows (17624 affected)
+2026-09-06 17:53:47,109 INFO    window 2026-03-01 00:00:00 .. 2026-03-02 00:00:00 committed (9139 rows; 60 windows, 692340 rows this run)
+2026-09-06 17:53:53,066 INFO    window 2026-03-02 00:00:00 .. 2026-03-03 00:00:00: 11122 rows
+2026-09-06 17:53:54,067 INFO      upserted 11122 rows (20918 affected)
+2026-09-06 17:53:54,077 INFO    window 2026-03-02 00:00:00 .. 2026-03-03 00:00:00 committed (11122 rows; 61 windows, 703462 rows this run)
+2026-09-06 17:54:02,066 INFO    window 2026-03-03 00:00:00 .. 2026-03-04 00:00:00: 10390 rows
+2026-09-06 17:54:03,007 INFO      upserted 10390 rows (19610 affected)
+2026-09-06 17:54:03,036 INFO    window 2026-03-03 00:00:00 .. 2026-03-04 00:00:00 committed (10390 rows; 62 windows, 713852 rows this run)
+2026-09-06 17:54:11,252 INFO    window 2026-03-04 00:00:00 .. 2026-03-05 00:00:00: 11353 rows
+2026-09-06 17:54:12,261 INFO      upserted 11353 rows (21382 affected)
+2026-09-06 17:54:12,274 INFO    window 2026-03-04 00:00:00 .. 2026-03-05 00:00:00 committed (11353 rows; 63 windows, 725205 rows this run)
+2026-09-06 17:54:20,586 INFO    window 2026-03-05 00:00:00 .. 2026-03-06 00:00:00: 10749 rows
+2026-09-06 17:54:21,605 INFO      upserted 10749 rows (19994 affected)
+2026-09-06 17:54:21,621 INFO    window 2026-03-05 00:00:00 .. 2026-03-06 00:00:00 committed (10749 rows; 64 windows, 735954 rows this run)
+2026-09-06 17:54:31,509 INFO    window 2026-03-06 00:00:00 .. 2026-03-07 00:00:00: 12335 rows
+2026-09-06 17:54:32,587 INFO      upserted 12335 rows (22884 affected)
+2026-09-06 17:54:32,608 INFO    window 2026-03-06 00:00:00 .. 2026-03-07 00:00:00 committed (12335 rows; 65 windows, 748289 rows this run)
+2026-09-06 17:54:37,296 INFO    window 2026-03-07 00:00:00 .. 2026-03-08 00:00:00: 9993 rows
+2026-09-06 17:54:38,214 INFO      upserted 9993 rows (19098 affected)
+2026-09-06 17:54:38,247 INFO    window 2026-03-07 00:00:00 .. 2026-03-08 00:00:00 committed (9993 rows; 66 windows, 758282 rows this run)
+2026-09-06 17:54:45,849 INFO    window 2026-03-08 00:00:00 .. 2026-03-09 00:00:00: 11107 rows
+2026-09-06 17:54:46,847 INFO      upserted 11107 rows (21216 affected)
+2026-09-06 17:54:46,867 INFO    window 2026-03-08 00:00:00 .. 2026-03-09 00:00:00 committed (11107 rows; 67 windows, 769389 rows this run)
+2026-09-06 17:54:55,826 INFO    window 2026-03-09 00:00:00 .. 2026-03-10 00:00:00: 14146 rows
+2026-09-06 17:54:57,131 INFO      upserted 14146 rows (26592 affected)
+2026-09-06 17:54:57,142 INFO    window 2026-03-09 00:00:00 .. 2026-03-10 00:00:00 committed (14146 rows; 68 windows, 783535 rows this run)
+2026-09-06 17:55:08,578 INFO    window 2026-03-10 00:00:00 .. 2026-03-11 00:00:00: 12715 rows
+2026-09-06 17:55:09,710 INFO      upserted 12715 rows (23628 affected)
+2026-09-06 17:55:09,726 INFO    window 2026-03-10 00:00:00 .. 2026-03-11 00:00:00 committed (12715 rows; 69 windows, 796250 rows this run)
+2026-09-06 17:55:15,616 INFO    window 2026-03-11 00:00:00 .. 2026-03-12 00:00:00: 11875 rows
+2026-09-06 17:55:16,689 INFO      upserted 11875 rows (21936 affected)
+2026-09-06 17:55:16,710 INFO    window 2026-03-11 00:00:00 .. 2026-03-12 00:00:00 committed (11875 rows; 70 windows, 808125 rows this run)
+2026-09-06 17:55:20,337 INFO    window 2026-03-12 00:00:00 .. 2026-03-13 00:00:00: 11237 rows
+2026-09-06 17:55:21,370 INFO      upserted 11237 rows (20936 affected)
+2026-09-06 17:55:21,395 INFO    window 2026-03-12 00:00:00 .. 2026-03-13 00:00:00 committed (11237 rows; 71 windows, 819362 rows this run)
+2026-09-06 17:55:24,205 INFO    window 2026-03-13 00:00:00 .. 2026-03-14 00:00:00: 11794 rows
+2026-09-06 17:55:25,305 INFO      upserted 11794 rows (22030 affected)
+2026-09-06 17:55:25,325 INFO    window 2026-03-13 00:00:00 .. 2026-03-14 00:00:00 committed (11794 rows; 72 windows, 831156 rows this run)
+2026-09-06 17:55:28,519 INFO    window 2026-03-14 00:00:00 .. 2026-03-15 00:00:00: 9715 rows
+2026-09-06 17:55:29,415 INFO      upserted 9715 rows (18384 affected)
+2026-09-06 17:55:29,433 INFO    window 2026-03-14 00:00:00 .. 2026-03-15 00:00:00 committed (9715 rows; 73 windows, 840871 rows this run)
+2026-09-06 17:55:29,433 INFO    window 2026-03-15 00:00:00 .. 2026-03-16 00:00:00: already committed, skipping
+2026-09-06 17:55:40,603 INFO    window 2026-03-16 00:00:00 .. 2026-03-17 00:00:00: 11300 rows
+2026-09-06 17:55:41,603 INFO      upserted 11300 rows (20832 affected)
+2026-09-06 17:55:41,618 INFO    window 2026-03-16 00:00:00 .. 2026-03-17 00:00:00 committed (11300 rows; 74 windows, 852171 rows this run)
+2026-09-06 17:55:44,986 INFO    window 2026-03-17 00:00:00 .. 2026-03-18 00:00:00: 11844 rows
+2026-09-06 17:55:46,051 INFO      upserted 11844 rows (21876 affected)
+2026-09-06 17:55:46,066 INFO    window 2026-03-17 00:00:00 .. 2026-03-18 00:00:00 committed (11844 rows; 75 windows, 864015 rows this run)
+2026-09-06 17:55:51,401 INFO    window 2026-03-18 00:00:00 .. 2026-03-19 00:00:00: 11645 rows
+2026-09-06 17:55:52,481 INFO      upserted 11645 rows (21284 affected)
+2026-09-06 17:55:52,506 INFO    window 2026-03-18 00:00:00 .. 2026-03-19 00:00:00 committed (11645 rows; 76 windows, 875660 rows this run)
+2026-09-06 17:56:12,600 INFO    window 2026-03-19 00:00:00 .. 2026-03-20 00:00:00: 11384 rows
+2026-09-06 17:56:13,635 INFO      upserted 11384 rows (21024 affected)
+2026-09-06 17:56:13,643 INFO    window 2026-03-19 00:00:00 .. 2026-03-20 00:00:00 committed (11384 rows; 77 windows, 887044 rows this run)
+2026-09-06 17:56:30,698 INFO    window 2026-03-20 00:00:00 .. 2026-03-21 00:00:00: 10563 rows
+2026-09-06 17:56:31,656 INFO      upserted 10563 rows (19466 affected)
+2026-09-06 17:56:31,669 INFO    window 2026-03-20 00:00:00 .. 2026-03-21 00:00:00 committed (10563 rows; 78 windows, 897607 rows this run)
+2026-09-06 17:56:41,352 INFO    window 2026-03-21 00:00:00 .. 2026-03-22 00:00:00: 9772 rows
+2026-09-06 17:56:42,253 INFO      upserted 9772 rows (18179 affected)
+2026-09-06 17:56:42,272 INFO    window 2026-03-21 00:00:00 .. 2026-03-22 00:00:00 committed (9772 rows; 79 windows, 907379 rows this run)
+2026-09-06 17:56:44,912 INFO    window 2026-03-22 00:00:00 .. 2026-03-23 00:00:00: 9599 rows
+2026-09-06 17:56:45,795 INFO      upserted 9599 rows (17756 affected)
+2026-09-06 17:56:45,807 INFO    window 2026-03-22 00:00:00 .. 2026-03-23 00:00:00 committed (9599 rows; 80 windows, 916978 rows this run)
+2026-09-06 17:56:52,549 INFO    window 2026-03-23 00:00:00 .. 2026-03-24 00:00:00: 11286 rows
+2026-09-06 17:56:53,573 INFO      upserted 11286 rows (20566 affected)
+2026-09-06 17:56:53,599 INFO    window 2026-03-23 00:00:00 .. 2026-03-24 00:00:00 committed (11286 rows; 81 windows, 928264 rows this run)
+2026-09-06 17:56:57,082 INFO    window 2026-03-24 00:00:00 .. 2026-03-25 00:00:00: 11767 rows
+2026-09-06 17:56:58,125 INFO      upserted 11767 rows (21182 affected)
+2026-09-06 17:56:58,146 INFO    window 2026-03-24 00:00:00 .. 2026-03-25 00:00:00 committed (11767 rows; 82 windows, 940031 rows this run)
+2026-09-06 17:57:02,036 INFO    window 2026-03-25 00:00:00 .. 2026-03-26 00:00:00: 10831 rows
+2026-09-06 17:57:03,013 INFO      upserted 10831 rows (19910 affected)
+2026-09-06 17:57:03,029 INFO    window 2026-03-25 00:00:00 .. 2026-03-26 00:00:00 committed (10831 rows; 83 windows, 950862 rows this run)
+2026-09-06 17:57:05,881 INFO    window 2026-03-26 00:00:00 .. 2026-03-27 00:00:00: 11429 rows
+2026-09-06 17:57:06,905 INFO      upserted 11429 rows (21030 affected)
+2026-09-06 17:57:06,919 INFO    window 2026-03-26 00:00:00 .. 2026-03-27 00:00:00 committed (11429 rows; 84 windows, 962291 rows this run)
+2026-09-06 17:57:10,013 INFO    window 2026-03-27 00:00:00 .. 2026-03-28 00:00:00: 10700 rows
+2026-09-06 17:57:10,998 INFO      upserted 10700 rows (19418 affected)
+2026-09-06 17:57:11,011 INFO    window 2026-03-27 00:00:00 .. 2026-03-28 00:00:00 committed (10700 rows; 85 windows, 972991 rows this run)
+2026-09-06 17:57:12,877 INFO    window 2026-03-28 00:00:00 .. 2026-03-29 00:00:00: 9612 rows
+2026-09-06 17:57:13,755 INFO      upserted 9612 rows (17930 affected)
+2026-09-06 17:57:13,774 INFO    window 2026-03-28 00:00:00 .. 2026-03-29 00:00:00 committed (9612 rows; 86 windows, 982603 rows this run)
+2026-09-06 17:57:17,261 INFO    window 2026-03-29 00:00:00 .. 2026-03-30 00:00:00: 9744 rows
+2026-09-06 17:57:18,157 INFO      upserted 9744 rows (18134 affected)
+2026-09-06 17:57:18,171 INFO    window 2026-03-29 00:00:00 .. 2026-03-30 00:00:00 committed (9744 rows; 87 windows, 992347 rows this run)
+2026-09-06 17:57:20,670 INFO    window 2026-03-30 00:00:00 .. 2026-03-31 00:00:00: 11658 rows
+2026-09-06 17:57:21,724 INFO      upserted 11658 rows (20980 affected)
+2026-09-06 17:57:21,746 INFO    window 2026-03-30 00:00:00 .. 2026-03-31 00:00:00 committed (11658 rows; 88 windows, 1004005 rows this run)
+2026-09-06 17:57:24,869 INFO    window 2026-03-31 00:00:00 .. 2026-04-01 00:00:00: 11846 rows
+2026-09-06 17:57:25,994 INFO      upserted 11846 rows (21304 affected)
+2026-09-06 17:57:26,001 INFO    window 2026-03-31 00:00:00 .. 2026-04-01 00:00:00 committed (11846 rows; 89 windows, 1015851 rows this run)
+2026-09-06 17:57:28,353 INFO    window 2026-04-01 00:00:00 .. 2026-04-02 00:00:00: 11076 rows
+2026-09-06 17:57:29,367 INFO      upserted 11076 rows (19616 affected)
+2026-09-06 17:57:29,384 INFO    window 2026-04-01 00:00:00 .. 2026-04-02 00:00:00 committed (11076 rows; 90 windows, 1026927 rows this run)
+2026-09-06 17:57:32,018 INFO    window 2026-04-02 00:00:00 .. 2026-04-03 00:00:00: 9650 rows
+2026-09-06 17:57:32,881 INFO      upserted 9650 rows (16658 affected)
+2026-09-06 17:57:32,903 INFO    window 2026-04-02 00:00:00 .. 2026-04-03 00:00:00 committed (9650 rows; 91 windows, 1036577 rows this run)
+2026-09-06 17:57:39,229 INFO    window 2026-04-03 00:00:00 .. 2026-04-04 00:00:00: 9652 rows
+2026-09-06 17:57:40,131 INFO      upserted 9652 rows (16760 affected)
+2026-09-06 17:57:40,143 INFO    window 2026-04-03 00:00:00 .. 2026-04-04 00:00:00 committed (9652 rows; 92 windows, 1046229 rows this run)
+2026-09-06 17:57:42,496 INFO    window 2026-04-04 00:00:00 .. 2026-04-05 00:00:00: 8816 rows
+2026-09-06 17:57:43,290 INFO      upserted 8816 rows (15740 affected)
+2026-09-06 17:57:43,315 INFO    window 2026-04-04 00:00:00 .. 2026-04-05 00:00:00 committed (8816 rows; 93 windows, 1055045 rows this run)
+2026-09-06 17:57:46,199 INFO    window 2026-04-05 00:00:00 .. 2026-04-06 00:00:00: 7800 rows
+2026-09-06 17:57:46,945 INFO      upserted 7800 rows (13854 affected)
+2026-09-06 17:57:46,960 INFO    window 2026-04-05 00:00:00 .. 2026-04-06 00:00:00 committed (7800 rows; 94 windows, 1062845 rows this run)
+2026-09-06 17:57:50,943 INFO    window 2026-04-06 00:00:00 .. 2026-04-07 00:00:00: 10471 rows
+2026-09-06 17:57:51,857 INFO      upserted 10471 rows (17612 affected)
+2026-09-06 17:57:51,876 INFO    window 2026-04-06 00:00:00 .. 2026-04-07 00:00:00 committed (10471 rows; 95 windows, 1073316 rows this run)
+2026-09-06 17:57:56,945 INFO    window 2026-04-07 00:00:00 .. 2026-04-08 00:00:00: 10415 rows
+2026-09-06 17:57:57,874 INFO      upserted 10415 rows (17534 affected)
+2026-09-06 17:57:57,896 INFO    window 2026-04-07 00:00:00 .. 2026-04-08 00:00:00 committed (10415 rows; 96 windows, 1083731 rows this run)
+2026-09-06 17:58:01,858 INFO    window 2026-04-08 00:00:00 .. 2026-04-09 00:00:00: 9966 rows
+2026-09-06 17:58:02,745 INFO      upserted 9966 rows (17050 affected)
+2026-09-06 17:58:02,764 INFO    window 2026-04-08 00:00:00 .. 2026-04-09 00:00:00 committed (9966 rows; 97 windows, 1093697 rows this run)
+2026-09-06 17:58:07,737 INFO    window 2026-04-09 00:00:00 .. 2026-04-10 00:00:00: 9642 rows
+2026-09-06 17:58:08,599 INFO      upserted 9642 rows (16226 affected)
+2026-09-06 17:58:08,638 INFO    window 2026-04-09 00:00:00 .. 2026-04-10 00:00:00 committed (9642 rows; 98 windows, 1103339 rows this run)
+2026-09-06 17:58:12,577 INFO    window 2026-04-10 00:00:00 .. 2026-04-11 00:00:00: 9740 rows
+2026-09-06 17:58:13,492 INFO      upserted 9740 rows (16258 affected)
+2026-09-06 17:58:13,538 INFO    window 2026-04-10 00:00:00 .. 2026-04-11 00:00:00 committed (9740 rows; 99 windows, 1113079 rows this run)
+2026-09-06 17:58:17,418 INFO    window 2026-04-11 00:00:00 .. 2026-04-12 00:00:00: 9219 rows
+2026-09-06 17:58:18,263 INFO      upserted 9219 rows (16216 affected)
+2026-09-06 17:58:18,297 INFO    window 2026-04-11 00:00:00 .. 2026-04-12 00:00:00 committed (9219 rows; 100 windows, 1122298 rows this run)
+2026-09-06 17:58:21,616 INFO    window 2026-04-12 00:00:00 .. 2026-04-13 00:00:00: 9458 rows
+2026-09-06 17:58:22,466 INFO      upserted 9458 rows (16636 affected)
+2026-09-06 17:58:22,479 INFO    window 2026-04-12 00:00:00 .. 2026-04-13 00:00:00 committed (9458 rows; 101 windows, 1131756 rows this run)
+2026-09-06 17:58:27,449 INFO    window 2026-04-13 00:00:00 .. 2026-04-14 00:00:00: 11118 rows
+2026-09-06 17:58:28,424 INFO      upserted 11118 rows (17994 affected)
+2026-09-06 17:58:28,463 INFO    window 2026-04-13 00:00:00 .. 2026-04-14 00:00:00 committed (11118 rows; 102 windows, 1142874 rows this run)
+2026-09-06 17:58:34,372 INFO    window 2026-04-14 00:00:00 .. 2026-04-15 00:00:00: 11963 rows
+2026-09-06 17:58:35,494 INFO      upserted 11963 rows (19450 affected)
+2026-09-06 17:58:35,530 INFO    window 2026-04-14 00:00:00 .. 2026-04-15 00:00:00 committed (11963 rows; 103 windows, 1154837 rows this run)
+2026-09-06 17:58:45,304 INFO    window 2026-04-15 00:00:00 .. 2026-04-16 00:00:00: 11205 rows
+2026-09-06 17:58:46,322 INFO      upserted 11205 rows (17992 affected)
+2026-09-06 17:58:46,371 INFO    window 2026-04-15 00:00:00 .. 2026-04-16 00:00:00 committed (11205 rows; 104 windows, 1166042 rows this run)
+2026-09-06 17:58:53,175 INFO    window 2026-04-16 00:00:00 .. 2026-04-17 00:00:00: 10969 rows
+2026-09-06 17:58:54,168 INFO      upserted 10969 rows (16962 affected)
+2026-09-06 17:58:54,204 INFO    window 2026-04-16 00:00:00 .. 2026-04-17 00:00:00 committed (10969 rows; 105 windows, 1177011 rows this run)
+2026-09-06 17:59:00,762 INFO    window 2026-04-17 00:00:00 .. 2026-04-18 00:00:00: 10778 rows
+2026-09-06 17:59:01,732 INFO      upserted 10778 rows (16772 affected)
+2026-09-06 17:59:01,747 INFO    window 2026-04-17 00:00:00 .. 2026-04-18 00:00:00 committed (10778 rows; 106 windows, 1187789 rows this run)
+2026-09-06 17:59:09,687 INFO    window 2026-04-18 00:00:00 .. 2026-04-19 00:00:00: 9538 rows
+2026-09-06 17:59:10,573 INFO      upserted 9538 rows (15698 affected)
+2026-09-06 17:59:10,606 INFO    window 2026-04-18 00:00:00 .. 2026-04-19 00:00:00 committed (9538 rows; 107 windows, 1197327 rows this run)
+2026-09-06 17:59:14,925 INFO    window 2026-04-19 00:00:00 .. 2026-04-20 00:00:00: 8584 rows
+2026-09-06 17:59:15,758 INFO      upserted 8584 rows (14246 affected)
+2026-09-06 17:59:15,794 INFO    window 2026-04-19 00:00:00 .. 2026-04-20 00:00:00 committed (8584 rows; 108 windows, 1205911 rows this run)
+2026-09-06 17:59:21,942 INFO    window 2026-04-20 00:00:00 .. 2026-04-21 00:00:00: 11036 rows
+2026-09-06 17:59:22,916 INFO      upserted 11036 rows (16468 affected)
+2026-09-06 17:59:22,956 INFO    window 2026-04-20 00:00:00 .. 2026-04-21 00:00:00 committed (11036 rows; 109 windows, 1216947 rows this run)
+2026-09-06 17:59:28,922 INFO    window 2026-04-21 00:00:00 .. 2026-04-22 00:00:00: 11097 rows
+2026-09-06 17:59:29,920 INFO      upserted 11097 rows (16426 affected)
+2026-09-06 17:59:29,934 INFO    window 2026-04-21 00:00:00 .. 2026-04-22 00:00:00 committed (11097 rows; 110 windows, 1228044 rows this run)
+2026-09-06 17:59:38,646 INFO    window 2026-04-22 00:00:00 .. 2026-04-23 00:00:00: 9933 rows
+2026-09-06 17:59:39,605 INFO      upserted 9933 rows (13924 affected)
+2026-09-06 17:59:39,616 INFO    window 2026-04-22 00:00:00 .. 2026-04-23 00:00:00 committed (9933 rows; 111 windows, 1237977 rows this run)
+2026-09-06 17:59:50,305 INFO    window 2026-04-23 00:00:00 .. 2026-04-24 00:00:00: 10704 rows
+2026-09-06 17:59:51,299 INFO      upserted 10704 rows (14276 affected)
+2026-09-06 17:59:51,317 INFO    window 2026-04-23 00:00:00 .. 2026-04-24 00:00:00 committed (10704 rows; 112 windows, 1248681 rows this run)
+2026-09-06 18:00:04,900 INFO    window 2026-04-24 00:00:00 .. 2026-04-25 00:00:00: 10370 rows
+2026-09-06 18:00:05,839 INFO      upserted 10370 rows (13894 affected)
+2026-09-06 18:00:05,850 INFO    window 2026-04-24 00:00:00 .. 2026-04-25 00:00:00 committed (10370 rows; 113 windows, 1259051 rows this run)
+2026-09-06 18:00:23,962 INFO    window 2026-04-25 00:00:00 .. 2026-04-26 00:00:00: 8148 rows
+2026-09-06 18:00:24,713 INFO      upserted 8148 rows (10172 affected)
+2026-09-06 18:00:24,788 INFO    window 2026-04-25 00:00:00 .. 2026-04-26 00:00:00 committed (8148 rows; 114 windows, 1267199 rows this run)
+2026-09-06 18:00:33,672 INFO    window 2026-04-26 00:00:00 .. 2026-04-27 00:00:00: 9296 rows
+2026-09-06 18:00:34,513 INFO      upserted 9296 rows (12690 affected)
+2026-09-06 18:00:34,592 INFO    window 2026-04-26 00:00:00 .. 2026-04-27 00:00:00 committed (9296 rows; 115 windows, 1276495 rows this run)
+2026-09-06 18:00:42,007 INFO    window 2026-04-27 00:00:00 .. 2026-04-28 00:00:00: 10943 rows
+2026-09-06 18:00:42,981 INFO      upserted 10943 rows (12822 affected)
+2026-09-06 18:00:42,990 INFO    window 2026-04-27 00:00:00 .. 2026-04-28 00:00:00 committed (10943 rows; 116 windows, 1287438 rows this run)
+2026-09-06 18:00:59,446 INFO    window 2026-04-28 00:00:00 .. 2026-04-29 00:00:00: 10584 rows
+2026-09-06 18:01:00,443 INFO      upserted 10584 rows (12070 affected)
+2026-09-06 18:01:00,457 INFO    window 2026-04-28 00:00:00 .. 2026-04-29 00:00:00 committed (10584 rows; 117 windows, 1298022 rows this run)
+2026-09-06 18:01:06,868 INFO    window 2026-04-29 00:00:00 .. 2026-04-30 00:00:00: 10012 rows
+2026-09-06 18:01:07,786 INFO      upserted 10012 rows (10912 affected)
+2026-09-06 18:01:07,802 INFO    window 2026-04-29 00:00:00 .. 2026-04-30 00:00:00 committed (10012 rows; 118 windows, 1308034 rows this run)
+2026-09-06 18:01:21,921 INFO    window 2026-04-30 00:00:00 .. 2026-05-01 00:00:00: 10007 rows
+2026-09-06 18:01:22,812 INFO      upserted 10007 rows (8298 affected)
+2026-09-06 18:01:22,827 INFO    window 2026-04-30 00:00:00 .. 2026-05-01 00:00:00 committed (10007 rows; 119 windows, 1318041 rows this run)
+2026-09-06 18:01:28,233 INFO    window 2026-05-01 00:00:00 .. 2026-05-02 00:00:00: 10533 rows
+2026-09-06 18:01:29,172 INFO      upserted 10533 rows (138 affected)
+2026-09-06 18:01:29,191 INFO    window 2026-05-01 00:00:00 .. 2026-05-02 00:00:00 committed (10533 rows; 120 windows, 1328574 rows this run)
+2026-09-06 18:01:45,969 INFO    window 2026-05-02 00:00:00 .. 2026-05-03 00:00:00: 9648 rows
+2026-09-06 18:01:46,819 INFO      upserted 9648 rows (76 affected)
+2026-09-06 18:01:46,839 INFO    window 2026-05-02 00:00:00 .. 2026-05-03 00:00:00 committed (9648 rows; 121 windows, 1338222 rows this run)
+2026-09-06 18:01:51,639 INFO    window 2026-05-03 00:00:00 .. 2026-05-04 00:00:00: 8955 rows
+2026-09-06 18:01:52,421 INFO      upserted 8955 rows (42 affected)
+2026-09-06 18:01:52,440 INFO    window 2026-05-03 00:00:00 .. 2026-05-04 00:00:00 committed (8955 rows; 122 windows, 1347177 rows this run)
+2026-09-06 18:02:01,606 INFO    window 2026-05-04 00:00:00 .. 2026-05-05 00:00:00: 11225 rows
+2026-09-06 18:02:02,556 INFO      upserted 11225 rows (86 affected)
+2026-09-06 18:02:02,576 INFO    window 2026-05-04 00:00:00 .. 2026-05-05 00:00:00 committed (11225 rows; 123 windows, 1358402 rows this run)
+2026-09-06 18:02:09,004 INFO    window 2026-05-05 00:00:00 .. 2026-05-06 00:00:00: 11634 rows
+2026-09-06 18:02:10,003 INFO      upserted 11634 rows (158 affected)
+2026-09-06 18:02:10,023 INFO    window 2026-05-05 00:00:00 .. 2026-05-06 00:00:00 committed (11634 rows; 124 windows, 1370036 rows this run)
+2026-09-06 18:02:21,085 INFO    window 2026-05-06 00:00:00 .. 2026-05-07 00:00:00: 10292 rows
+2026-09-06 18:02:21,975 INFO      upserted 10292 rows (270 affected)
+2026-09-06 18:02:21,995 INFO    window 2026-05-06 00:00:00 .. 2026-05-07 00:00:00 committed (10292 rows; 125 windows, 1380328 rows this run)
+2026-09-06 18:02:28,928 INFO    window 2026-05-07 00:00:00 .. 2026-05-08 00:00:00: 10262 rows
+2026-09-06 18:02:29,856 INFO      upserted 10262 rows (224 affected)
+2026-09-06 18:02:29,875 INFO    window 2026-05-07 00:00:00 .. 2026-05-08 00:00:00 committed (10262 rows; 126 windows, 1390590 rows this run)
+2026-09-06 18:02:33,063 INFO    window 2026-05-08 00:00:00 .. 2026-05-09 00:00:00: 10493 rows
+2026-09-06 18:02:33,969 INFO      upserted 10493 rows (172 affected)
+2026-09-06 18:02:33,979 INFO    window 2026-05-08 00:00:00 .. 2026-05-09 00:00:00 committed (10493 rows; 127 windows, 1401083 rows this run)
+2026-09-06 18:02:36,355 INFO    window 2026-05-09 00:00:00 .. 2026-05-10 00:00:00: 9058 rows
+2026-09-06 18:02:37,155 INFO      upserted 9058 rows (21 affected)
+2026-09-06 18:02:37,173 INFO    window 2026-05-09 00:00:00 .. 2026-05-10 00:00:00 committed (9058 rows; 128 windows, 1410141 rows this run)
+2026-09-06 18:02:39,002 INFO    window 2026-05-10 00:00:00 .. 2026-05-11 00:00:00: 9265 rows
+2026-09-06 18:02:39,834 INFO      upserted 9265 rows (15 affected)
+2026-09-06 18:02:39,853 INFO    window 2026-05-10 00:00:00 .. 2026-05-11 00:00:00 committed (9265 rows; 129 windows, 1419406 rows this run)
+2026-09-06 18:02:53,820 INFO    window 2026-05-11 00:00:00 .. 2026-05-12 00:00:00: 11046 rows
+2026-09-06 18:02:54,780 INFO      upserted 11046 rows (86 affected)
+2026-09-06 18:02:54,800 INFO    window 2026-05-11 00:00:00 .. 2026-05-12 00:00:00 committed (11046 rows; 130 windows, 1430452 rows this run)
+2026-09-06 18:03:10,988 INFO    window 2026-05-12 00:00:00 .. 2026-05-13 00:00:00: 11045 rows
+2026-09-06 18:03:11,993 INFO      upserted 11045 rows (67 affected)
+2026-09-06 18:03:12,013 INFO    window 2026-05-12 00:00:00 .. 2026-05-13 00:00:00 committed (11045 rows; 131 windows, 1441497 rows this run)
+2026-09-06 18:03:23,791 INFO    window 2026-05-13 00:00:00 .. 2026-05-14 00:00:00: 10793 rows
+2026-09-06 18:03:24,736 INFO      upserted 10793 rows (391 affected)
+2026-09-06 18:03:24,748 INFO    window 2026-05-13 00:00:00 .. 2026-05-14 00:00:00 committed (10793 rows; 132 windows, 1452290 rows this run)
+2026-09-06 18:03:31,798 INFO    window 2026-05-14 00:00:00 .. 2026-05-15 00:00:00: 10316 rows
+2026-09-06 18:03:32,721 INFO      upserted 10316 rows (731 affected)
+2026-09-06 18:03:32,733 INFO    window 2026-05-14 00:00:00 .. 2026-05-15 00:00:00 committed (10316 rows; 133 windows, 1462606 rows this run)
+2026-09-06 18:03:47,244 INFO    window 2026-05-15 00:00:00 .. 2026-05-16 00:00:00: 11099 rows
+2026-09-06 18:03:48,245 INFO      upserted 11099 rows (37 affected)
+2026-09-06 18:03:48,255 INFO    window 2026-05-15 00:00:00 .. 2026-05-16 00:00:00 committed (11099 rows; 134 windows, 1473705 rows this run)
+2026-09-06 18:03:50,475 INFO    window 2026-05-16 00:00:00 .. 2026-05-17 00:00:00: 10875 rows
+2026-09-06 18:03:51,487 INFO      upserted 10875 rows (31 affected)
+2026-09-06 18:03:51,506 INFO    window 2026-05-16 00:00:00 .. 2026-05-17 00:00:00 committed (10875 rows; 135 windows, 1484580 rows this run)
+2026-09-06 18:03:56,428 INFO    window 2026-05-17 00:00:00 .. 2026-05-18 00:00:00: 11602 rows
+2026-09-06 18:03:57,479 INFO      upserted 11602 rows (31 affected)
+2026-09-06 18:03:57,488 INFO    window 2026-05-17 00:00:00 .. 2026-05-18 00:00:00 committed (11602 rows; 136 windows, 1496182 rows this run)
+2026-09-06 18:04:04,070 INFO    window 2026-05-18 00:00:00 .. 2026-05-19 00:00:00: 11480 rows
+2026-09-06 18:04:05,071 INFO      upserted 11480 rows (59 affected)
+2026-09-06 18:04:05,082 INFO    window 2026-05-18 00:00:00 .. 2026-05-19 00:00:00 committed (11480 rows; 137 windows, 1507662 rows this run)
+2026-09-06 18:04:09,645 INFO    window 2026-05-19 00:00:00 .. 2026-05-20 00:00:00: 12339 rows
+2026-09-06 18:04:10,744 INFO      upserted 12339 rows (68 affected)
+2026-09-06 18:04:10,763 INFO    window 2026-05-19 00:00:00 .. 2026-05-20 00:00:00 committed (12339 rows; 138 windows, 1520001 rows this run)
+2026-09-06 18:04:13,599 INFO    window 2026-05-20 00:00:00 .. 2026-05-21 00:00:00: 12733 rows
+2026-09-06 18:04:14,724 INFO      upserted 12733 rows (53 affected)
+2026-09-06 18:04:14,743 INFO    window 2026-05-20 00:00:00 .. 2026-05-21 00:00:00 committed (12733 rows; 139 windows, 1532734 rows this run)
+2026-09-06 18:04:22,291 INFO    window 2026-05-21 00:00:00 .. 2026-05-22 00:00:00: 12095 rows
+2026-09-06 18:04:23,340 INFO      upserted 12095 rows (56 affected)
+2026-09-06 18:04:23,360 INFO    window 2026-05-21 00:00:00 .. 2026-05-22 00:00:00 committed (12095 rows; 140 windows, 1544829 rows this run)
+2026-09-06 18:04:33,064 INFO    window 2026-05-22 00:00:00 .. 2026-05-23 00:00:00: 10568 rows
+2026-09-06 18:04:34,003 INFO      upserted 10568 rows (44 affected)
+2026-09-06 18:04:34,012 INFO    window 2026-05-22 00:00:00 .. 2026-05-23 00:00:00 committed (10568 rows; 141 windows, 1555397 rows this run)
+2026-09-06 18:04:36,477 INFO    window 2026-05-23 00:00:00 .. 2026-05-24 00:00:00: 7972 rows
+2026-09-06 18:04:37,187 INFO      upserted 7972 rows (14 affected)
+2026-09-06 18:04:37,205 INFO    window 2026-05-23 00:00:00 .. 2026-05-24 00:00:00 committed (7972 rows; 142 windows, 1563369 rows this run)
+2026-09-06 18:04:41,854 INFO    window 2026-05-24 00:00:00 .. 2026-05-25 00:00:00: 8254 rows
+2026-09-06 18:04:42,568 INFO      upserted 8254 rows (18 affected)
+2026-09-06 18:04:42,587 INFO    window 2026-05-24 00:00:00 .. 2026-05-25 00:00:00 committed (8254 rows; 143 windows, 1571623 rows this run)
+2026-09-06 18:04:51,377 INFO    window 2026-05-25 00:00:00 .. 2026-05-26 00:00:00: 10072 rows
+2026-09-06 18:04:52,272 INFO      upserted 10072 rows (38 affected)
+2026-09-06 18:04:52,290 INFO    window 2026-05-25 00:00:00 .. 2026-05-26 00:00:00 committed (10072 rows; 144 windows, 1581695 rows this run)
+2026-09-06 18:04:59,092 INFO    window 2026-05-26 00:00:00 .. 2026-05-27 00:00:00: 12512 rows
+2026-09-06 18:05:00,192 INFO      upserted 12512 rows (72 affected)
+2026-09-06 18:05:00,210 INFO    window 2026-05-26 00:00:00 .. 2026-05-27 00:00:00 committed (12512 rows; 145 windows, 1594207 rows this run)
+2026-09-06 18:05:03,600 INFO    window 2026-05-27 00:00:00 .. 2026-05-28 00:00:00: 11486 rows
+2026-09-06 18:05:04,614 INFO      upserted 11486 rows (85 affected)
+2026-09-06 18:05:04,622 INFO    window 2026-05-27 00:00:00 .. 2026-05-28 00:00:00 committed (11486 rows; 146 windows, 1605693 rows this run)
+2026-09-06 18:05:14,319 INFO    window 2026-05-28 00:00:00 .. 2026-05-29 00:00:00: 11147 rows
+2026-09-06 18:05:15,263 INFO      upserted 11147 rows (59 affected)
+2026-09-06 18:05:15,282 INFO    window 2026-05-28 00:00:00 .. 2026-05-29 00:00:00 committed (11147 rows; 147 windows, 1616840 rows this run)
+2026-09-06 18:05:19,454 INFO    window 2026-05-29 00:00:00 .. 2026-05-30 00:00:00: 11629 rows
+2026-09-06 18:05:20,534 INFO      upserted 11629 rows (62 affected)
+2026-09-06 18:05:20,553 INFO    window 2026-05-29 00:00:00 .. 2026-05-30 00:00:00 committed (11629 rows; 148 windows, 1628469 rows this run)
+2026-09-06 18:05:23,651 INFO    window 2026-05-30 00:00:00 .. 2026-05-31 00:00:00: 10085 rows
+2026-09-06 18:05:24,558 INFO      upserted 10085 rows (37 affected)
+2026-09-06 18:05:24,577 INFO    window 2026-05-30 00:00:00 .. 2026-05-31 00:00:00 committed (10085 rows; 149 windows, 1638554 rows this run)
+2026-09-06 18:05:30,538 INFO    window 2026-05-31 00:00:00 .. 2026-06-01 00:00:00: 11465 rows
+2026-09-06 18:05:31,543 INFO      upserted 11465 rows (42 affected)
+2026-09-06 18:05:31,563 INFO    window 2026-05-31 00:00:00 .. 2026-06-01 00:00:00 committed (11465 rows; 150 windows, 1650019 rows this run)
+2026-09-06 18:05:37,209 INFO    window 2026-06-01 00:00:00 .. 2026-06-02 00:00:00: 11810 rows
+2026-09-06 18:05:38,273 INFO      upserted 11810 rows (104 affected)
+2026-09-06 18:05:38,282 INFO    window 2026-06-01 00:00:00 .. 2026-06-02 00:00:00 committed (11810 rows; 151 windows, 1661829 rows this run)
+2026-09-06 18:05:43,538 INFO    window 2026-06-02 00:00:00 .. 2026-06-03 00:00:00: 11593 rows
+2026-09-06 18:05:44,603 INFO      upserted 11593 rows (59 affected)
+2026-09-06 18:05:44,622 INFO    window 2026-06-02 00:00:00 .. 2026-06-03 00:00:00 committed (11593 rows; 152 windows, 1673422 rows this run)
+2026-09-06 18:05:47,581 INFO    window 2026-06-03 00:00:00 .. 2026-06-04 00:00:00: 11538 rows
+2026-09-06 18:05:48,579 INFO      upserted 11538 rows (68 affected)
+2026-09-06 18:05:48,589 INFO    window 2026-06-03 00:00:00 .. 2026-06-04 00:00:00 committed (11538 rows; 153 windows, 1684960 rows this run)
+2026-09-06 18:05:54,531 INFO    window 2026-06-04 00:00:00 .. 2026-06-05 00:00:00: 11214 rows
+2026-09-06 18:05:55,510 INFO      upserted 11214 rows (72 affected)
+2026-09-06 18:05:55,529 INFO    window 2026-06-04 00:00:00 .. 2026-06-05 00:00:00 committed (11214 rows; 154 windows, 1696174 rows this run)
+2026-09-06 18:06:00,059 INFO    window 2026-06-05 00:00:00 .. 2026-06-06 00:00:00: 11688 rows
+2026-09-06 18:06:01,088 INFO      upserted 11688 rows (105 affected)
+2026-09-06 18:06:01,097 INFO    window 2026-06-05 00:00:00 .. 2026-06-06 00:00:00 committed (11688 rows; 155 windows, 1707862 rows this run)
+2026-09-06 18:06:05,357 INFO    window 2026-06-06 00:00:00 .. 2026-06-07 00:00:00: 10539 rows
+2026-09-06 18:06:06,327 INFO      upserted 10539 rows (101 affected)
+2026-09-06 18:06:06,347 INFO    window 2026-06-06 00:00:00 .. 2026-06-07 00:00:00 committed (10539 rows; 156 windows, 1718401 rows this run)
+2026-09-06 18:06:15,286 INFO    window 2026-06-07 00:00:00 .. 2026-06-08 00:00:00: 12559 rows
+2026-09-06 18:06:16,394 INFO      upserted 12559 rows (106 affected)
+2026-09-06 18:06:16,403 INFO    window 2026-06-07 00:00:00 .. 2026-06-08 00:00:00 committed (12559 rows; 157 windows, 1730960 rows this run)
+2026-09-06 18:06:19,259 INFO    window 2026-06-08 00:00:00 .. 2026-06-09 00:00:00: 12206 rows
+2026-09-06 18:06:20,322 INFO      upserted 12206 rows (288 affected)
+2026-09-06 18:06:20,333 INFO    window 2026-06-08 00:00:00 .. 2026-06-09 00:00:00 committed (12206 rows; 158 windows, 1743166 rows this run)
+2026-09-06 18:06:24,844 INFO    window 2026-06-09 00:00:00 .. 2026-06-10 00:00:00: 11912 rows
+2026-09-06 18:06:25,897 INFO      upserted 11912 rows (390 affected)
+2026-09-06 18:06:25,908 INFO    window 2026-06-09 00:00:00 .. 2026-06-10 00:00:00 committed (11912 rows; 159 windows, 1755078 rows this run)
+2026-09-06 18:06:28,343 INFO    window 2026-06-10 00:00:00 .. 2026-06-11 00:00:00: 11275 rows
+2026-09-06 18:06:29,364 INFO      upserted 11275 rows (76 affected)
+2026-09-06 18:06:29,382 INFO    window 2026-06-10 00:00:00 .. 2026-06-11 00:00:00 committed (11275 rows; 160 windows, 1766353 rows this run)
+2026-09-06 18:06:32,934 INFO    window 2026-06-11 00:00:00 .. 2026-06-12 00:00:00: 11035 rows
+2026-09-06 18:06:33,895 INFO      upserted 11035 rows (80 affected)
+2026-09-06 18:06:33,915 INFO    window 2026-06-11 00:00:00 .. 2026-06-12 00:00:00 committed (11035 rows; 161 windows, 1777388 rows this run)
+2026-09-06 18:06:39,155 INFO    window 2026-06-12 00:00:00 .. 2026-06-13 00:00:00: 10998 rows
+2026-09-06 18:06:40,145 INFO      upserted 10998 rows (115 affected)
+2026-09-06 18:06:40,165 INFO    window 2026-06-12 00:00:00 .. 2026-06-13 00:00:00 committed (10998 rows; 162 windows, 1788386 rows this run)
+2026-09-06 18:06:42,441 INFO    window 2026-06-13 00:00:00 .. 2026-06-14 00:00:00: 10184 rows
+2026-09-06 18:06:43,318 INFO      upserted 10184 rows (78 affected)
+2026-09-06 18:06:43,329 INFO    window 2026-06-13 00:00:00 .. 2026-06-14 00:00:00 committed (10184 rows; 163 windows, 1798570 rows this run)
+2026-09-06 18:06:47,589 INFO    window 2026-06-14 00:00:00 .. 2026-06-15 00:00:00: 10698 rows
+2026-09-06 18:06:48,594 INFO      upserted 10698 rows (102 affected)
+2026-09-06 18:06:48,614 INFO    window 2026-06-14 00:00:00 .. 2026-06-15 00:00:00 committed (10698 rows; 164 windows, 1809268 rows this run)
+2026-09-06 18:06:51,190 INFO    window 2026-06-15 00:00:00 .. 2026-06-16 00:00:00: 11535 rows
+2026-09-06 18:06:52,258 INFO      upserted 11535 rows (134 affected)
+2026-09-06 18:06:52,278 INFO    window 2026-06-15 00:00:00 .. 2026-06-16 00:00:00 committed (11535 rows; 165 windows, 1820803 rows this run)
+2026-09-06 18:07:01,221 INFO    window 2026-06-16 00:00:00 .. 2026-06-17 00:00:00: 11242 rows
+2026-09-06 18:07:02,221 INFO      upserted 11242 rows (365 affected)
+2026-09-06 18:07:02,226 INFO    window 2026-06-16 00:00:00 .. 2026-06-17 00:00:00 committed (11242 rows; 166 windows, 1832045 rows this run)
+2026-09-06 18:07:05,051 INFO    window 2026-06-17 00:00:00 .. 2026-06-18 00:00:00: 10409 rows
+2026-09-06 18:07:05,982 INFO      upserted 10409 rows (584 affected)
+2026-09-06 18:07:05,993 INFO    window 2026-06-17 00:00:00 .. 2026-06-18 00:00:00 committed (10409 rows; 167 windows, 1842454 rows this run)
+2026-09-06 18:07:09,600 INFO    window 2026-06-18 00:00:00 .. 2026-06-19 00:00:00: 10816 rows
+2026-09-06 18:07:10,576 INFO      upserted 10816 rows (111 affected)
+2026-09-06 18:07:10,585 INFO    window 2026-06-18 00:00:00 .. 2026-06-19 00:00:00 committed (10816 rows; 168 windows, 1853270 rows this run)
+2026-09-06 18:07:17,875 INFO    window 2026-06-19 00:00:00 .. 2026-06-20 00:00:00: 10240 rows
+2026-09-06 18:07:18,787 INFO      upserted 10240 rows (96 affected)
+2026-09-06 18:07:18,807 INFO    window 2026-06-19 00:00:00 .. 2026-06-20 00:00:00 committed (10240 rows; 169 windows, 1863510 rows this run)
+2026-09-06 18:07:21,335 INFO    window 2026-06-20 00:00:00 .. 2026-06-21 00:00:00: 10414 rows
+2026-09-06 18:07:22,282 INFO      upserted 10414 rows (73 affected)
+2026-09-06 18:07:22,301 INFO    window 2026-06-20 00:00:00 .. 2026-06-21 00:00:00 committed (10414 rows; 170 windows, 1873924 rows this run)
+2026-09-06 18:07:25,505 INFO    window 2026-06-21 00:00:00 .. 2026-06-22 00:00:00: 11685 rows
+2026-09-06 18:07:26,576 INFO      upserted 11685 rows (47 affected)
+2026-09-06 18:07:26,596 INFO    window 2026-06-21 00:00:00 .. 2026-06-22 00:00:00 committed (11685 rows; 171 windows, 1885609 rows this run)
+2026-09-06 18:07:40,498 INFO    window 2026-06-22 00:00:00 .. 2026-06-23 00:00:00: 11305 rows
+2026-09-06 18:07:41,488 INFO      upserted 11305 rows (114 affected)
+2026-09-06 18:07:41,509 INFO    window 2026-06-22 00:00:00 .. 2026-06-23 00:00:00 committed (11305 rows; 172 windows, 1896914 rows this run)
+2026-09-06 18:07:46,591 INFO    window 2026-06-23 00:00:00 .. 2026-06-24 00:00:00: 10440 rows
+2026-09-06 18:07:47,559 INFO      upserted 10440 rows (110 affected)
+2026-09-06 18:07:47,579 INFO    window 2026-06-23 00:00:00 .. 2026-06-24 00:00:00 committed (10440 rows; 173 windows, 1907354 rows this run)
+2026-09-06 18:07:54,747 INFO    window 2026-06-24 00:00:00 .. 2026-06-25 00:00:00: 11367 rows
+2026-09-06 18:07:55,730 INFO      upserted 11367 rows (93 affected)
+2026-09-06 18:07:55,751 INFO    window 2026-06-24 00:00:00 .. 2026-06-25 00:00:00 committed (11367 rows; 174 windows, 1918721 rows this run)
+2026-09-06 18:08:05,862 INFO    window 2026-06-25 00:00:00 .. 2026-06-26 00:00:00: 10955 rows
+2026-09-06 18:08:06,812 INFO      upserted 10955 rows (73 affected)
+2026-09-06 18:08:06,832 INFO    window 2026-06-25 00:00:00 .. 2026-06-26 00:00:00 committed (10955 rows; 175 windows, 1929676 rows this run)
+2026-09-06 18:08:17,439 INFO    window 2026-06-26 00:00:00 .. 2026-06-27 00:00:00: 11031 rows
+2026-09-06 18:08:18,427 INFO      upserted 11031 rows (89 affected)
+2026-09-06 18:08:18,446 INFO    window 2026-06-26 00:00:00 .. 2026-06-27 00:00:00 committed (11031 rows; 176 windows, 1940707 rows this run)
+2026-09-06 18:08:21,298 INFO    window 2026-06-27 00:00:00 .. 2026-06-28 00:00:00: 9885 rows
+2026-09-06 18:08:22,248 INFO      upserted 9885 rows (82 affected)
+2026-09-06 18:08:22,267 INFO    window 2026-06-27 00:00:00 .. 2026-06-28 00:00:00 committed (9885 rows; 177 windows, 1950592 rows this run)
+2026-09-06 18:08:33,216 INFO    window 2026-06-28 00:00:00 .. 2026-06-29 00:00:00: 10999 rows
+2026-09-06 18:08:34,206 INFO      upserted 10999 rows (40 affected)
+2026-09-06 18:08:34,216 INFO    window 2026-06-28 00:00:00 .. 2026-06-29 00:00:00 committed (10999 rows; 178 windows, 1961591 rows this run)
+2026-09-06 18:08:45,235 INFO    window 2026-06-29 00:00:00 .. 2026-06-30 00:00:00: 11949 rows
+2026-09-06 18:08:46,290 INFO      upserted 11949 rows (128 affected)
+2026-09-06 18:08:46,310 INFO    window 2026-06-29 00:00:00 .. 2026-06-30 00:00:00 committed (11949 rows; 179 windows, 1973540 rows this run)
+2026-09-06 18:08:54,092 INFO    window 2026-06-30 00:00:00 .. 2026-07-01 00:00:00: 11312 rows
+2026-09-06 18:08:55,094 INFO      upserted 11312 rows (70 affected)
+2026-09-06 18:08:55,105 INFO    window 2026-06-30 00:00:00 .. 2026-07-01 00:00:00 committed (11312 rows; 180 windows, 1984852 rows this run)
+2026-09-06 18:09:01,682 INFO    window 2026-07-01 00:00:00 .. 2026-07-02 00:00:00: 11602 rows
+2026-09-06 18:09:02,733 INFO      upserted 11602 rows (102 affected)
+2026-09-06 18:09:02,738 INFO    window 2026-07-01 00:00:00 .. 2026-07-02 00:00:00 committed (11602 rows; 181 windows, 1996454 rows this run)
+2026-09-06 18:09:20,776 INFO    window 2026-07-02 00:00:00 .. 2026-07-03 00:00:00: 14139 rows
+2026-09-06 18:09:21,982 INFO      upserted 14139 rows (87 affected)
+2026-09-06 18:09:21,993 INFO    window 2026-07-02 00:00:00 .. 2026-07-03 00:00:00 committed (14139 rows; 182 windows, 2010593 rows this run)
+2026-09-06 18:09:32,880 INFO    window 2026-07-03 00:00:00 .. 2026-07-04 00:00:00: 13081 rows
+2026-09-06 18:09:34,047 INFO      upserted 13081 rows (81 affected)
+2026-09-06 18:09:34,065 INFO    window 2026-07-03 00:00:00 .. 2026-07-04 00:00:00 committed (13081 rows; 183 windows, 2023674 rows this run)
+2026-09-06 18:09:37,572 INFO    window 2026-07-04 00:00:00 .. 2026-07-05 00:00:00: 13148 rows
+2026-09-06 18:09:38,741 INFO      upserted 13148 rows (307 affected)
+2026-09-06 18:09:38,760 INFO    window 2026-07-04 00:00:00 .. 2026-07-05 00:00:00 committed (13148 rows; 184 windows, 2036822 rows this run)
+2026-09-06 18:09:50,292 INFO    window 2026-07-05 00:00:00 .. 2026-07-06 00:00:00: 12277 rows
+2026-09-06 18:09:51,451 INFO      upserted 12277 rows (783 affected)
+2026-09-06 18:09:51,456 INFO    window 2026-07-05 00:00:00 .. 2026-07-06 00:00:00 committed (12277 rows; 185 windows, 2049099 rows this run)
+2026-09-06 18:09:53,800 INFO    window 2026-07-06 00:00:00 .. 2026-07-07 00:00:00: 11473 rows
+2026-09-06 18:09:54,807 INFO      upserted 11473 rows (125 affected)
+2026-09-06 18:09:54,827 INFO    window 2026-07-06 00:00:00 .. 2026-07-07 00:00:00 committed (11473 rows; 186 windows, 2060572 rows this run)
+2026-09-06 18:10:03,528 INFO    window 2026-07-07 00:00:00 .. 2026-07-08 00:00:00: 11607 rows
+2026-09-06 18:10:04,554 INFO      upserted 11607 rows (36 affected)
+2026-09-06 18:10:04,572 INFO    window 2026-07-07 00:00:00 .. 2026-07-08 00:00:00 committed (11607 rows; 187 windows, 2072179 rows this run)
+2026-09-06 18:10:12,191 INFO    window 2026-07-08 00:00:00 .. 2026-07-09 00:00:00: 11544 rows
+2026-09-06 18:10:13,196 INFO      upserted 11544 rows (59 affected)
+2026-09-06 18:10:13,216 INFO    window 2026-07-08 00:00:00 .. 2026-07-09 00:00:00 committed (11544 rows; 188 windows, 2083723 rows this run)
+2026-09-06 18:10:16,777 INFO    window 2026-07-09 00:00:00 .. 2026-07-10 00:00:00: 10911 rows
+2026-09-06 18:10:17,777 INFO      upserted 10911 rows (70 affected)
+2026-09-06 18:10:17,796 INFO    window 2026-07-09 00:00:00 .. 2026-07-10 00:00:00 committed (10911 rows; 189 windows, 2094634 rows this run)
+2026-09-06 18:10:26,222 INFO    window 2026-07-10 00:00:00 .. 2026-07-11 00:00:00: 10753 rows
+2026-09-06 18:10:27,168 INFO      upserted 10753 rows (51 affected)
+2026-09-06 18:10:27,187 INFO    window 2026-07-10 00:00:00 .. 2026-07-11 00:00:00 committed (10753 rows; 190 windows, 2105387 rows this run)
+2026-09-06 18:10:30,302 INFO    window 2026-07-11 00:00:00 .. 2026-07-12 00:00:00: 9193 rows
+2026-09-06 18:10:31,122 INFO      upserted 9193 rows (27 affected)
+2026-09-06 18:10:31,131 INFO    window 2026-07-11 00:00:00 .. 2026-07-12 00:00:00 committed (9193 rows; 191 windows, 2114580 rows this run)
+2026-09-06 18:10:33,977 INFO    window 2026-07-12 00:00:00 .. 2026-07-13 00:00:00: 10383 rows
+2026-09-06 18:10:34,904 INFO      upserted 10383 rows (39 affected)
+2026-09-06 18:10:34,913 INFO    window 2026-07-12 00:00:00 .. 2026-07-13 00:00:00 committed (10383 rows; 192 windows, 2124963 rows this run)
+2026-09-06 18:10:42,330 INFO    window 2026-07-13 00:00:00 .. 2026-07-14 00:00:00: 11614 rows
+2026-09-06 18:10:43,384 INFO      upserted 11614 rows (71 affected)
+2026-09-06 18:10:43,403 INFO    window 2026-07-13 00:00:00 .. 2026-07-14 00:00:00 committed (11614 rows; 193 windows, 2136577 rows this run)
+2026-09-06 18:10:47,704 INFO    window 2026-07-14 00:00:00 .. 2026-07-15 00:00:00: 11403 rows
+2026-09-06 18:10:48,726 INFO      upserted 11403 rows (89 affected)
+2026-09-06 18:10:48,745 INFO    window 2026-07-14 00:00:00 .. 2026-07-15 00:00:00 committed (11403 rows; 194 windows, 2147980 rows this run)
+2026-09-06 18:10:55,787 INFO    window 2026-07-15 00:00:00 .. 2026-07-16 00:00:00: 10724 rows
+2026-09-06 18:10:56,729 INFO      upserted 10724 rows (107 affected)
+2026-09-06 18:10:56,749 INFO    window 2026-07-15 00:00:00 .. 2026-07-16 00:00:00 committed (10724 rows; 195 windows, 2158704 rows this run)
+2026-09-06 18:11:01,954 INFO    window 2026-07-16 00:00:00 .. 2026-07-17 00:00:00: 10216 rows
+2026-09-06 18:11:02,843 INFO      upserted 10216 rows (93 affected)
+2026-09-06 18:11:02,853 INFO    window 2026-07-16 00:00:00 .. 2026-07-17 00:00:00 committed (10216 rows; 196 windows, 2168920 rows this run)
+2026-09-06 18:11:13,507 INFO    window 2026-07-17 00:00:00 .. 2026-07-18 00:00:00: 10887 rows
+2026-09-06 18:11:14,534 INFO      upserted 10887 rows (112 affected)
+2026-09-06 18:11:14,543 INFO    window 2026-07-17 00:00:00 .. 2026-07-18 00:00:00 committed (10887 rows; 197 windows, 2179807 rows this run)
+2026-09-06 18:11:17,858 INFO    window 2026-07-18 00:00:00 .. 2026-07-19 00:00:00: 9402 rows
+2026-09-06 18:11:18,696 INFO      upserted 9402 rows (113 affected)
+2026-09-06 18:11:18,714 INFO    window 2026-07-18 00:00:00 .. 2026-07-19 00:00:00 committed (9402 rows; 198 windows, 2189209 rows this run)
+2026-09-06 18:11:24,415 INFO    window 2026-07-19 00:00:00 .. 2026-07-20 00:00:00: 9991 rows
+2026-09-06 18:11:25,301 INFO      upserted 9991 rows (52 affected)
+2026-09-06 18:11:25,320 INFO    window 2026-07-19 00:00:00 .. 2026-07-20 00:00:00 committed (9991 rows; 199 windows, 2199200 rows this run)
+2026-09-06 18:11:27,375 INFO    window 2026-07-20 00:00:00 .. 2026-07-21 00:00:00: 12028 rows
+2026-09-06 18:11:28,498 INFO      upserted 12028 rows (139 affected)
+2026-09-06 18:11:28,509 INFO    window 2026-07-20 00:00:00 .. 2026-07-21 00:00:00 committed (12028 rows; 200 windows, 2211228 rows this run)
+2026-09-06 18:11:30,490 INFO    window 2026-07-21 00:00:00 .. 2026-07-22 00:00:00: 10672 rows
+2026-09-06 18:11:31,409 INFO      upserted 10672 rows (65 affected)
+2026-09-06 18:11:31,419 INFO    window 2026-07-21 00:00:00 .. 2026-07-22 00:00:00 committed (10672 rows; 201 windows, 2221900 rows this run)
+2026-09-06 18:11:33,930 INFO    window 2026-07-22 00:00:00 .. 2026-07-23 00:00:00: 10535 rows
+2026-09-06 18:11:34,893 INFO      upserted 10535 rows (75 affected)
+2026-09-06 18:11:34,911 INFO    window 2026-07-22 00:00:00 .. 2026-07-23 00:00:00 committed (10535 rows; 202 windows, 2232435 rows this run)
+2026-09-06 18:11:40,715 INFO    window 2026-07-23 00:00:00 .. 2026-07-24 00:00:00: 10585 rows
+2026-09-06 18:11:41,637 INFO      upserted 10585 rows (81 affected)
+2026-09-06 18:11:41,646 INFO    window 2026-07-23 00:00:00 .. 2026-07-24 00:00:00 committed (10585 rows; 203 windows, 2243020 rows this run)
+2026-09-06 18:11:44,889 INFO    window 2026-07-24 00:00:00 .. 2026-07-25 00:00:00: 10726 rows
+2026-09-06 18:11:45,839 INFO      upserted 10726 rows (100 affected)
+2026-09-06 18:11:45,849 INFO    window 2026-07-24 00:00:00 .. 2026-07-25 00:00:00 committed (10726 rows; 204 windows, 2253746 rows this run)
+2026-09-06 18:11:49,012 INFO    window 2026-07-25 00:00:00 .. 2026-07-26 00:00:00: 10002 rows
+2026-09-06 18:11:49,934 INFO      upserted 10002 rows (415 affected)
+2026-09-06 18:11:49,953 INFO    window 2026-07-25 00:00:00 .. 2026-07-26 00:00:00 committed (10002 rows; 205 windows, 2263748 rows this run)
+2026-09-06 18:11:57,047 INFO    window 2026-07-26 00:00:00 .. 2026-07-27 00:00:00: 11562 rows
+2026-09-06 18:11:58,133 INFO      upserted 11562 rows (763 affected)
+2026-09-06 18:11:58,146 INFO    window 2026-07-26 00:00:00 .. 2026-07-27 00:00:00 committed (11562 rows; 206 windows, 2275310 rows this run)
+2026-09-06 18:12:01,832 INFO    window 2026-07-27 00:00:00 .. 2026-07-28 00:00:00: 11253 rows
+2026-09-06 18:12:02,798 INFO      upserted 11253 rows (125 affected)
+2026-09-06 18:12:02,820 INFO    window 2026-07-27 00:00:00 .. 2026-07-28 00:00:00 committed (11253 rows; 207 windows, 2286563 rows this run)
+2026-09-06 18:12:04,680 INFO    window 2026-07-28 00:00:00 .. 2026-07-29 00:00:00: 10468 rows
+2026-09-06 18:12:05,608 INFO      upserted 10468 rows (158 affected)
+2026-09-06 18:12:05,628 INFO    window 2026-07-28 00:00:00 .. 2026-07-29 00:00:00 committed (10468 rows; 208 windows, 2297031 rows this run)
+2026-09-06 18:12:08,832 INFO    window 2026-07-29 00:00:00 .. 2026-07-30 00:00:00: 10411 rows
+2026-09-06 18:12:09,756 INFO      upserted 10411 rows (158 affected)
+2026-09-06 18:12:09,775 INFO    window 2026-07-29 00:00:00 .. 2026-07-30 00:00:00 committed (10411 rows; 209 windows, 2307442 rows this run)
+2026-09-06 18:12:11,403 INFO    window 2026-07-30 00:00:00 .. 2026-07-31 00:00:00: 9805 rows
+2026-09-06 18:12:12,330 INFO      upserted 9805 rows (687 affected)
+2026-09-06 18:12:12,340 INFO    window 2026-07-30 00:00:00 .. 2026-07-31 00:00:00 committed (9805 rows; 210 windows, 2317247 rows this run)
+2026-09-06 18:12:15,233 INFO    window 2026-07-31 00:00:00 .. 2026-08-01 00:00:00: 10648 rows
+2026-09-06 18:12:16,163 INFO      upserted 10648 rows (59 affected)
+2026-09-06 18:12:16,172 INFO    window 2026-07-31 00:00:00 .. 2026-08-01 00:00:00 committed (10648 rows; 211 windows, 2327895 rows this run)
+2026-09-06 18:12:21,564 INFO    window 2026-08-01 00:00:00 .. 2026-08-02 00:00:00: 9989 rows
+2026-09-06 18:12:22,476 INFO      upserted 9989 rows (43 affected)
+2026-09-06 18:12:22,494 INFO    window 2026-08-01 00:00:00 .. 2026-08-02 00:00:00 committed (9989 rows; 212 windows, 2337884 rows this run)
+2026-09-06 18:12:26,282 INFO    window 2026-08-02 00:00:00 .. 2026-08-03 00:00:00: 9843 rows
+2026-09-06 18:12:27,145 INFO      upserted 9843 rows (50 affected)
+2026-09-06 18:12:27,164 INFO    window 2026-08-02 00:00:00 .. 2026-08-03 00:00:00 committed (9843 rows; 213 windows, 2347727 rows this run)
+2026-09-06 18:12:29,829 INFO    window 2026-08-03 00:00:00 .. 2026-08-04 00:00:00: 11228 rows
+2026-09-06 18:12:30,790 INFO      upserted 11228 rows (118 affected)
+2026-09-06 18:12:30,801 INFO    window 2026-08-03 00:00:00 .. 2026-08-04 00:00:00 committed (11228 rows; 214 windows, 2358955 rows this run)
+2026-09-06 18:12:32,844 INFO    window 2026-08-04 00:00:00 .. 2026-08-05 00:00:00: 11229 rows
+2026-09-06 18:12:33,873 INFO      upserted 11229 rows (406 affected)
+2026-09-06 18:12:33,887 INFO    window 2026-08-04 00:00:00 .. 2026-08-05 00:00:00 committed (11229 rows; 215 windows, 2370184 rows this run)
+2026-09-06 18:12:36,884 INFO    window 2026-08-05 00:00:00 .. 2026-08-06 00:00:00: 10287 rows
+2026-09-06 18:12:37,800 INFO      upserted 10287 rows (99 affected)
+2026-09-06 18:12:37,820 INFO    window 2026-08-05 00:00:00 .. 2026-08-06 00:00:00 committed (10287 rows; 216 windows, 2380471 rows this run)
+2026-09-06 18:12:40,114 INFO    window 2026-08-06 00:00:00 .. 2026-08-07 00:00:00: 10388 rows
+2026-09-06 18:12:41,060 INFO      upserted 10388 rows (63 affected)
+2026-09-06 18:12:41,080 INFO    window 2026-08-06 00:00:00 .. 2026-08-07 00:00:00 committed (10388 rows; 217 windows, 2390859 rows this run)
+2026-09-06 18:12:43,395 INFO    window 2026-08-07 00:00:00 .. 2026-08-08 00:00:00: 10805 rows
+2026-09-06 18:12:44,359 INFO      upserted 10805 rows (52 affected)
+2026-09-06 18:12:44,367 INFO    window 2026-08-07 00:00:00 .. 2026-08-08 00:00:00 committed (10805 rows; 218 windows, 2401664 rows this run)
+2026-09-06 18:12:47,645 INFO    window 2026-08-08 00:00:00 .. 2026-08-09 00:00:00: 9938 rows
+2026-09-06 18:12:48,560 INFO      upserted 9938 rows (27 affected)
+2026-09-06 18:12:48,579 INFO    window 2026-08-08 00:00:00 .. 2026-08-09 00:00:00 committed (9938 rows; 219 windows, 2411602 rows this run)
+2026-09-06 18:12:52,244 INFO    window 2026-08-09 00:00:00 .. 2026-08-10 00:00:00: 10629 rows
+2026-09-06 18:12:53,243 INFO      upserted 10629 rows (28 affected)
+2026-09-06 18:12:53,254 INFO    window 2026-08-09 00:00:00 .. 2026-08-10 00:00:00 committed (10629 rows; 220 windows, 2422231 rows this run)
+2026-09-06 18:12:57,137 INFO    window 2026-08-10 00:00:00 .. 2026-08-11 00:00:00: 11483 rows
+2026-09-06 18:12:58,122 INFO      upserted 11483 rows (62 affected)
+2026-09-06 18:12:58,141 INFO    window 2026-08-10 00:00:00 .. 2026-08-11 00:00:00 committed (11483 rows; 221 windows, 2433714 rows this run)
+2026-09-06 18:13:01,740 INFO    window 2026-08-11 00:00:00 .. 2026-08-12 00:00:00: 11020 rows
+2026-09-06 18:13:02,705 INFO      upserted 11020 rows (76 affected)
+2026-09-06 18:13:02,724 INFO    window 2026-08-11 00:00:00 .. 2026-08-12 00:00:00 committed (11020 rows; 222 windows, 2444734 rows this run)
+2026-09-06 18:13:05,986 INFO    window 2026-08-12 00:00:00 .. 2026-08-13 00:00:00: 10800 rows
+2026-09-06 18:13:06,948 INFO      upserted 10800 rows (900 affected)
+2026-09-06 18:13:06,962 INFO    window 2026-08-12 00:00:00 .. 2026-08-13 00:00:00 committed (10800 rows; 223 windows, 2455534 rows this run)
+2026-09-06 18:13:14,298 INFO    window 2026-08-13 00:00:00 .. 2026-08-14 00:00:00: 10546 rows
+2026-09-06 18:13:15,246 INFO      upserted 10546 rows (37 affected)
+2026-09-06 18:13:15,266 INFO    window 2026-08-13 00:00:00 .. 2026-08-14 00:00:00 committed (10546 rows; 224 windows, 2466080 rows this run)
+2026-09-06 18:13:18,711 INFO    window 2026-08-14 00:00:00 .. 2026-08-15 00:00:00: 10557 rows
+2026-09-06 18:13:19,638 INFO      upserted 10557 rows (22 affected)
+2026-09-06 18:13:19,657 INFO    window 2026-08-14 00:00:00 .. 2026-08-15 00:00:00 committed (10557 rows; 225 windows, 2476637 rows this run)
+2026-09-06 18:13:25,662 INFO    window 2026-08-15 00:00:00 .. 2026-08-16 00:00:00: 9614 rows
+2026-09-06 18:13:26,532 INFO      upserted 9614 rows (15 affected)
+2026-09-06 18:13:26,542 INFO    window 2026-08-15 00:00:00 .. 2026-08-16 00:00:00 committed (9614 rows; 226 windows, 2486251 rows this run)
+2026-09-06 18:13:31,364 INFO    window 2026-08-16 00:00:00 .. 2026-08-17 00:00:00: 9249 rows
+2026-09-06 18:13:32,197 INFO      upserted 9249 rows (165 affected)
+2026-09-06 18:13:32,201 INFO    window 2026-08-16 00:00:00 .. 2026-08-17 00:00:00 committed (9249 rows; 227 windows, 2495500 rows this run)
+2026-09-06 18:13:35,478 INFO    window 2026-08-17 00:00:00 .. 2026-08-18 00:00:00: 10857 rows
+2026-09-06 18:13:36,501 INFO      upserted 10857 rows (1417 affected)
+2026-09-06 18:13:36,514 INFO    window 2026-08-17 00:00:00 .. 2026-08-18 00:00:00 committed (10857 rows; 228 windows, 2506357 rows this run)
+2026-09-06 18:13:40,483 INFO    window 2026-08-18 00:00:00 .. 2026-08-19 00:00:00: 10977 rows
+2026-09-06 18:13:41,428 INFO      upserted 10977 rows (48 affected)
+2026-09-06 18:13:41,446 INFO    window 2026-08-18 00:00:00 .. 2026-08-19 00:00:00 committed (10977 rows; 229 windows, 2517334 rows this run)
+2026-09-06 18:13:49,235 INFO    window 2026-08-19 00:00:00 .. 2026-08-20 00:00:00: 10703 rows
+2026-09-06 18:13:50,173 INFO      upserted 10703 rows (36 affected)
+2026-09-06 18:13:50,184 INFO    window 2026-08-19 00:00:00 .. 2026-08-20 00:00:00 committed (10703 rows; 230 windows, 2528037 rows this run)
+2026-09-06 18:13:55,877 INFO    window 2026-08-20 00:00:00 .. 2026-08-21 00:00:00: 11062 rows
+2026-09-06 18:13:56,842 INFO      upserted 11062 rows (241 affected)
+2026-09-06 18:13:56,853 INFO    window 2026-08-20 00:00:00 .. 2026-08-21 00:00:00 committed (11062 rows; 231 windows, 2539099 rows this run)
+2026-09-06 18:14:01,052 INFO    window 2026-08-21 00:00:00 .. 2026-08-22 00:00:00: 11521 rows
+2026-09-06 18:14:02,106 INFO      upserted 11521 rows (303 affected)
+2026-09-06 18:14:02,118 INFO    window 2026-08-21 00:00:00 .. 2026-08-22 00:00:00 committed (11521 rows; 232 windows, 2550620 rows this run)
+2026-09-06 18:14:06,712 INFO    window 2026-08-22 00:00:00 .. 2026-08-23 00:00:00: 10047 rows
+2026-09-06 18:14:07,630 INFO      upserted 10047 rows (121 affected)
+2026-09-06 18:14:07,642 INFO    window 2026-08-22 00:00:00 .. 2026-08-23 00:00:00 committed (10047 rows; 233 windows, 2560667 rows this run)
+2026-09-06 18:14:11,358 INFO    window 2026-08-23 00:00:00 .. 2026-08-24 00:00:00: 10790 rows
+2026-09-06 18:14:12,311 INFO      upserted 10790 rows (208 affected)
+2026-09-06 18:14:12,322 INFO    window 2026-08-23 00:00:00 .. 2026-08-24 00:00:00 committed (10790 rows; 234 windows, 2571457 rows this run)
+2026-09-06 18:14:19,428 INFO    window 2026-08-24 00:00:00 .. 2026-08-25 00:00:00: 11667 rows
+2026-09-06 18:14:20,452 INFO      upserted 11667 rows (435 affected)
+2026-09-06 18:14:20,465 INFO    window 2026-08-24 00:00:00 .. 2026-08-25 00:00:00 committed (11667 rows; 235 windows, 2583124 rows this run)
+2026-09-06 18:14:25,744 INFO    window 2026-08-25 00:00:00 .. 2026-08-26 00:00:00: 10922 rows
+2026-09-06 18:14:26,680 INFO      upserted 10922 rows (184 affected)
+2026-09-06 18:14:26,699 INFO    window 2026-08-25 00:00:00 .. 2026-08-26 00:00:00 committed (10922 rows; 236 windows, 2594046 rows this run)
+2026-09-06 18:14:31,802 INFO    window 2026-08-26 00:00:00 .. 2026-08-27 00:00:00: 10609 rows
+2026-09-06 18:14:32,780 INFO      upserted 10609 rows (435 affected)
+2026-09-06 18:14:32,791 INFO    window 2026-08-26 00:00:00 .. 2026-08-27 00:00:00 committed (10609 rows; 237 windows, 2604655 rows this run)
+2026-09-06 18:14:38,852 INFO    window 2026-08-27 00:00:00 .. 2026-08-28 00:00:00: 10043 rows
+2026-09-06 18:14:39,752 INFO      upserted 10043 rows (417 affected)
+2026-09-06 18:14:39,763 INFO    window 2026-08-27 00:00:00 .. 2026-08-28 00:00:00 committed (10043 rows; 238 windows, 2614698 rows this run)
+2026-09-06 18:14:43,851 INFO    window 2026-08-28 00:00:00 .. 2026-08-29 00:00:00: 10807 rows
+2026-09-06 18:14:44,824 INFO      upserted 10807 rows (331 affected)
+2026-09-06 18:14:44,845 INFO    window 2026-08-28 00:00:00 .. 2026-08-29 00:00:00 committed (10807 rows; 239 windows, 2625505 rows this run)
+2026-09-06 18:14:47,578 INFO    window 2026-08-29 00:00:00 .. 2026-08-30 00:00:00: 9401 rows
+2026-09-06 18:14:48,478 INFO      upserted 9401 rows (1352 affected)
+2026-09-06 18:14:48,489 INFO    window 2026-08-29 00:00:00 .. 2026-08-30 00:00:00 committed (9401 rows; 240 windows, 2634906 rows this run)
+2026-09-06 18:14:53,854 INFO    window 2026-08-30 00:00:00 .. 2026-08-31 00:00:00: 10229 rows
+2026-09-06 18:14:54,839 INFO      upserted 10229 rows (705 affected)
+2026-09-06 18:14:54,855 INFO    window 2026-08-30 00:00:00 .. 2026-08-31 00:00:00 committed (10229 rows; 241 windows, 2645135 rows this run)
+2026-09-06 18:15:00,130 INFO    window 2026-08-31 00:00:00 .. 2026-09-01 00:00:00: 11206 rows
+2026-09-06 18:15:01,133 INFO      upserted 11206 rows (773 affected)
+2026-09-06 18:15:01,141 INFO    window 2026-08-31 00:00:00 .. 2026-09-01 00:00:00 committed (11206 rows; 242 windows, 2656341 rows this run)
+2026-09-06 18:15:06,095 INFO    window 2026-09-01 00:00:00 .. 2026-09-02 00:00:00: 9900 rows
+2026-09-06 18:15:06,949 INFO      upserted 9900 rows (48 affected)
+2026-09-06 18:15:06,968 INFO    window 2026-09-01 00:00:00 .. 2026-09-02 00:00:00 committed (9900 rows; 243 windows, 2666241 rows this run)
+2026-09-06 18:15:10,980 INFO    window 2026-09-02 00:00:00 .. 2026-09-03 00:00:00: 10155 rows
+2026-09-06 18:15:11,872 INFO      upserted 10155 rows (70 affected)
+2026-09-06 18:15:11,890 INFO    window 2026-09-02 00:00:00 .. 2026-09-03 00:00:00 committed (10155 rows; 244 windows, 2676396 rows this run)
+2026-09-06 18:15:14,233 INFO    window 2026-09-03 00:00:00 .. 2026-09-04 00:00:00: 10771 rows
+2026-09-06 18:15:15,213 INFO      upserted 10771 rows (1 affected)
+2026-09-06 18:15:15,223 INFO    window 2026-09-03 00:00:00 .. 2026-09-04 00:00:00 committed (10771 rows; 245 windows, 2687167 rows this run)
+2026-09-06 18:15:17,615 INFO    window 2026-09-04 00:00:00 .. 2026-09-05 00:00:00: 10430 rows
+2026-09-06 18:15:18,552 INFO      upserted 10430 rows (0 affected)
+2026-09-06 18:15:18,562 INFO    window 2026-09-04 00:00:00 .. 2026-09-05 00:00:00 committed (10430 rows; 246 windows, 2697597 rows this run)
+2026-09-06 18:15:19,670 INFO    window 2026-09-05 00:00:00 .. 2026-09-06 00:00:00: 718 rows
+2026-09-06 18:15:19,761 INFO      upserted 718 rows (0 affected)
+2026-09-06 18:15:19,770 INFO    window 2026-09-05 00:00:00 .. 2026-09-06 00:00:00 committed (718 rows; 247 windows, 2698315 rows this run)
+2026-09-06 18:15:20,218 INFO    window 2026-09-06 00:00:00 .. 2026-09-07 00:00:00: 0 rows
+2026-09-06 18:15:20,236 INFO    window 2026-09-06 00:00:00 .. 2026-09-07 00:00:00 committed (0 rows; 248 windows, 2698315 rows this run)
+2026-09-06 18:15:20,236 INFO    sweep complete: 248 window(s), 2698315 rows processed
+2026-09-06 18:15:20,240 INFO    Sweep took 1710.5 s
+sweep exit code: 0

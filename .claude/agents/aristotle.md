@@ -21,10 +21,13 @@ The data is **local, in MariaDB** — not the Socrata API. Query it through
 
     db/q "SELECT Borough, COUNT(*) FROM NYC311 GROUP BY Borough"
 
-Database `nyc311_calls`. Main table **`NYC311`**: 21,080,417 rows, 13.8 GB,
-InnoDB. `NYC311_TEST` is empty. Lookup tables joined by id:
-`agencies` (22 rows, `agency_id`), `community_boards` (78, `cb_id`),
-`location_types` (216, `lt_id`), `address_types` (7, `at_id`).
+Database `nyc311_calls`. Main table **`NYC311`**: 22,356,884 rows as of
+2026-09-06, InnoDB, `Unique_Key` as PRIMARY KEY. Lookup tables joined by id, all
+populated and enforced by FOREIGN KEY constraints: `agencies` (22 rows,
+`agency_id`), `community_boards` (78, `cb_id`), `location_types` (224, `lt_id` —
+this one grows as the feed introduces new values), `address_types` (7,
+`at_id`). An id is NULL only where the source text value is
+NULL. `NYC311_TEST` no longer exists.
 
 **Column names differ from the published NYC Open Data schema.** Do not assume
 the standard names:
@@ -37,34 +40,55 @@ the standard names:
 | `Council_Dicharict` | Council District — note the typo, it is in the schema |
 | `Police_Precinct` | e.g. `Precinct 25` |
 
-`Unique_Key` is unique across all 21,080,417 rows — no duplicate keys.
+`Unique_Key` is unique across every row — no duplicate keys.
 `Status` has 8 distinct values, `Problem` 257, `Borough` 6.
 
-### The dates are empty — read this before any temporal analysis
+### Dates
 
-**All four date columns are 100% NULL: `Created_Date`, `Closed_Date`,
-`Due_Date`, `Resolution_Action_Updated_Date`.** Zero non-null values in
-21 million rows. The import did not parse them.
+Reloaded 2026-08-25 and correct. `Created_Date` is populated on every row,
+typed `datetime`, with time of day preserved. `Closed_Date`
+98.1%, `Resolution_Action_Updated_Date` 99.2%, `Due_Date` 0.3% — the gaps are
+genuine (an open request has no closed date), not an import failure.
 
-This means the table currently cannot answer any question involving time:
-trends, seasonality, year-over-year, resolution time, backlog, age of open
-cases. If a request needs a date, say so immediately and stop — do not
-substitute a proxy, and never present a time-based finding from this table.
+**Coverage is 2020-01-01 to 2026-09-05.** The 2020 start is the published
+dataset's own coverage — verified against the live API, whose
+`min(created_date)` is also 2020-01-01 — not an artifact of our export. Do not
+describe this table as covering the full history of 311, and do not compare it
+against published figures that begin in 2010.
 
-The columns are also typed `date`, so even after a correct reimport the
-time of day is lost unless they are changed to `datetime`. Hour-of-day
-analysis needs that change.
+### Check currency before any temporal analysis — read this first
+
+**The recent tail has twice been empty while the table looked fine.** Through
+2026-08-29 this table held ~240 rows for June 2026 against a true ~335,000. An
+analyst who charted 2026 trends without checking would have reported a 99.9%
+collapse in complaint volume that never happened.
+
+So before any trend, seasonality, year-over-year, or backlog work, run this:
+
+    db/q "SELECT DATE_FORMAT(Created_Date,'%Y-%m') m, COUNT(*) c
+          FROM NYC311 WHERE Created_Date >= '2026-01-01' GROUP BY m ORDER BY m"
+
+Healthy months are ~300–345 K rows, roughly 11 K/day. A month in the hundreds or
+low thousands is **missing data, not a real decline.** Say so and stop; do not
+report the artifact as a finding, and do not smooth or interpolate over it.
+
+The same rule applies to the newest partial month, which is always incomplete —
+exclude it or label it, never let it read as a downturn.
+
+46,372 rows (0.22%) have `Closed_Date` before `Created_Date`, and 19,576 (0.09%)
+have a midnight `Created_Date`. Both are source data errors. Exclude them
+explicitly and report the count — never clamp them.
 
 ### Performance
 
-The table has **no primary key** and indexes only on the four lookup ids
-(`agency_id`, `cb_id`, `lt_id`, `at_id`). Nothing indexes `Unique_Key`,
-`Problem`, `Borough`, `Status`, or the dates — so any filter or aggregate on
-those scans all 13.8 GB.
+Indexed: `Unique_Key` (PRIMARY), `Created_Date`, `Problem`, `Borough`,
+`Status`, `Incident_Zip`, and the four lookup ids. An aggregate over an
+unindexed column still scans the full table.
 
-- A full-table aggregate takes roughly 10 s warm and 40 s cold: the 20 GB
-  buffer pool holds the whole table in RAM. Tolerable, but it is still a full
-  scan every time — an index would make these sub-second.
+- `Unique_Key` is the PRIMARY KEY, and `Created_Date`, `Problem`, `Borough`,
+  `Status`, and `Incident_Zip` are each indexed (added 2026-08-25). Filters on
+  those are fast; a full-table aggregate over unindexed columns still costs
+  roughly 10 s warm with the 20 GB buffer pool.
 - Combine questions into a single pass. One query computing ten aggregates
   costs one scan; ten queries cost ten.
 - Develop against a `LIMIT`ed subset, then run the full query once.
