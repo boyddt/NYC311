@@ -1,0 +1,6 @@
+day               API       DB    diff
+--------------------------------------
+--------------------------------------
+days compared: 77   days differing: 0
+DB short total: 0   DB extra total: 0
+API total: 821,785   DB total: 821,785

@@ -93,6 +93,34 @@ MIN_SWEEP_WINDOW = timedelta(seconds=1)    # below this, a full page is not cred
 CREATED_FLOOR = datetime(2000, 1, 1)
 CREATED_CEILING_SLACK = timedelta(days=30)
 
+# A drain is only ever started because the cursor just read a full page whose
+# rows all carry one :updated_at — so the caller has already *proved* the group
+# holds at least that many rows. A drain that reads back fewer is contradicting
+# evidence we already hold, and the only safe reading of a contradiction is that
+# the re-read failed, not that the group shrank to nothing.
+#
+# It can shrink a little for real: a row edited mid-drain moves to a later
+# :updated_at and leaves the pinned group. Off-batch churn on this feed is a few
+# rows a minute against a drain measured in minutes, so 1% of a page (500 rows
+# at the default 50,000) is roughly two orders of magnitude of headroom. The
+# floor keeps a small page size (tests, --page-size tuning) from aborting on a
+# single edit.
+#
+# The threshold is deliberately tight because the two errors do not cost the
+# same thing: a false abort costs one re-run, while a false "drained, complete"
+# advances the watermark past rows no later cursor run will ever ask for again.
+# That is the unearned-watermark failure mode, and this is its third occurrence.
+DRAIN_SHORTFALL_FRACTION = 0.01
+DRAIN_SHORTFALL_FLOOR = 5
+
+# A drain that reads *nothing* has yielded nothing, so re-reading it from the
+# start cannot double-count or pass off a partial read as complete. That — and
+# only that — is retried: on 2026-09-15 the pinned predicate returned an empty
+# body for a 551,857-row group and served the same group correctly hours later.
+# Any other shortfall aborts on the first attempt; correctness beats recovery.
+DRAIN_EMPTY_ATTEMPTS = 3
+DRAIN_RETRY_DELAY = 5.0
+
 # Transient failures worth another attempt. OSError covers urllib's URLError
 # (a subclass) *and* the bare TimeoutError that http.client raises from
 # getresponse() on a read timeout — which urllib does not wrap, because it only
@@ -319,6 +347,10 @@ def iter_pages(
     cursor itself, the tie group at that timestamp is wider than a page and the
     cursor can never step over it; that group is handed to drain_tie_group,
     which walks it by created_date, and the cursor then steps strictly past.
+    Stepping past is what makes the drain load-bearing, so the caller tells the
+    drain how many tied rows it just saw and the drain refuses to report success
+    on fewer — a drain that comes back near-empty raises rather than letting the
+    watermark move over rows nothing ever read.
 
     max_pages counts requests made by this cursor, not rows or batches; a drain
     yields its own batches without consuming the allowance.
@@ -366,8 +398,18 @@ def iter_pages(
             # is the fact to test on. The group is drained by created_date
             # instead — immutable, therefore splittable — after which the cursor
             # steps strictly past it.
+            #
+            # Count the tied rows rather than passing page_size: this is the
+            # evidence the drain is checked against, so it has to be what was
+            # actually observed. (Every row on this page must carry the cursor's
+            # stamp — the request asked for >= cursor and the maximum came back
+            # equal to it — but the drain's guard is only as trustworthy as the
+            # number behind it, so it is counted, not inferred.)
+            tied = sum(1 for record in page
+                       if parse_timestamp(record.get(":updated_at"), ":updated_at") == cursor)
             yield from drain_tie_group(cursor, set(boundary_keys), page_size=page_size,
-                                       app_token=app_token, timeout=timeout)
+                                       app_token=app_token, timeout=timeout,
+                                       expected_at_least=tied)
             inclusive = False
             boundary_keys = set()
             continue
@@ -438,6 +480,15 @@ def iter_window_batches(
         pending.appendleft((lo, mid))
 
 
+def drain_shortfall_tolerance(page_size: int) -> int:
+    """How far short of the proven size a drain may legitimately come back.
+
+    See DRAIN_SHORTFALL_FRACTION: the allowance exists for rows edited mid-drain
+    and nothing else, so it is sized against churn, not against the group.
+    """
+    return max(DRAIN_SHORTFALL_FLOOR, int(page_size * DRAIN_SHORTFALL_FRACTION))
+
+
 def drain_tie_group(
     moment: datetime,
     already_seen: set[str],
@@ -445,6 +496,7 @@ def drain_tie_group(
     page_size: int,
     app_token: str | None,
     timeout: int,
+    expected_at_least: int,
 ) -> Iterator[list[dict[str, Any]]]:
     """Yield every row stamped exactly `moment`, in pages, minus those seen.
 
@@ -453,24 +505,69 @@ def drain_tie_group(
     nightly refresh puts hundreds of thousands of rows on one timestamp.
     The group is pinned with `:updated_at = moment` and then walked by
     created_date windows — the same immutable-key trick the sweep uses — so no
-    $offset is needed here either. The set can only shrink while we read it (an
-    edit moves a row to a *later* stamp, where the cursor will meet it again),
-    never gain members, so a short count is expected and only worth a note.
+    $offset is needed here either.
+
+    `expected_at_least` is what the caller already established before calling:
+    it saw a full page in which that many rows carried this exact stamp, so the
+    group cannot be smaller than that. The drain is checked against it rather
+    than trusted, because the cursor steps *strictly past* this stamp the
+    moment this generator finishes, and the watermark goes with it.
+
+    The group can only shrink while we read it (an edit moves a row to a later
+    stamp, where the cursor will meet it again), never gain members — but it can
+    only shrink by the handful of rows edited during the drain itself. A small
+    shortfall is therefore a note; a large one is not a shrunken group, it is a
+    read that failed silently, and it raises EtlError so the run exits non-zero
+    with the watermark still below this stamp. On 2026-09-15 a drain of a
+    551,857-row group read back 0 rows, was believed, and cost 8,213 rows that
+    no later cursor run could see.
     """
-    LOG.warning("tie group at %s exceeds one page; draining it by created_date", moment)
+    LOG.warning("tie group at %s exceeds one page (%d row(s) of it already seen at "
+                "that stamp); draining it by created_date", moment, expected_at_least)
     pinned = f":updated_at = '{socrata_stamp(moment)}'"
-    ceiling = datetime.now() + CREATED_CEILING_SLACK
+    tolerance = drain_shortfall_tolerance(page_size)
+    floor = expected_at_least - tolerance
+    observed = 0
     collected = 0
-    for _lo, _hi, rows in iter_window_batches(
-        CREATED_FLOOR, ceiling,
-        page_size=page_size, app_token=app_token, timeout=timeout, extra_where=pinned,
-    ):
-        fresh = [record for record in rows if str(record.get("unique_key")) not in already_seen]
-        already_seen.update(str(record.get("unique_key")) for record in rows)
-        collected += len(fresh)
-        if fresh:
-            yield fresh
-    LOG.info("tie group at %s drained: %d further row(s)", moment, collected)
+
+    for attempt in range(1, DRAIN_EMPTY_ATTEMPTS + 1):
+        observed = 0
+        collected = 0
+        ceiling = datetime.now() + CREATED_CEILING_SLACK
+        for _lo, _hi, rows in iter_window_batches(
+            CREATED_FLOOR, ceiling,
+            page_size=page_size, app_token=app_token, timeout=timeout, extra_where=pinned,
+        ):
+            observed += len(rows)
+            fresh = [record for record in rows if str(record.get("unique_key")) not in already_seen]
+            already_seen.update(str(record.get("unique_key")) for record in rows)
+            collected += len(fresh)
+            if fresh:
+                yield fresh
+        if observed or attempt == DRAIN_EMPTY_ATTEMPTS:
+            break
+        # Nothing was read, therefore nothing was yielded and `already_seen` is
+        # untouched: starting over is a clean repeat, not a resumption.
+        delay = DRAIN_RETRY_DELAY * 2 ** (attempt - 1)
+        LOG.warning("tie group at %s read back empty, but a full page proved it holds at "
+                    "least %d row(s); retry %d/%d in %.0f s",
+                    moment, expected_at_least, attempt, DRAIN_EMPTY_ATTEMPTS, delay)
+        time.sleep(delay)
+
+    if observed < floor:
+        raise EtlError(
+            f"tie group at {moment} drained only {observed} row(s), but the cursor page "
+            f"proved it holds at least {expected_at_least} (tolerance {tolerance}). "
+            f"The group cannot have shrunk that far, so the read failed. Aborting with "
+            f"the watermark below {moment}; re-run once the API serves "
+            f":updated_at = '{socrata_stamp(moment)}' completely."
+        )
+    if observed < expected_at_least:
+        LOG.warning("tie group at %s drained %d row(s), %d short of the %d proven — within "
+                    "the %d-row tolerance, consistent with rows edited mid-drain",
+                    moment, observed, expected_at_least - observed, expected_at_least, tolerance)
+    LOG.info("tie group at %s drained: %d row(s) at that stamp, %d further row(s) new",
+             moment, observed, collected)
 
 
 def iter_windows(start: datetime, end: datetime, window: timedelta) -> Iterator[tuple[datetime, datetime]]:

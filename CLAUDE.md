@@ -42,7 +42,7 @@ sync when renaming.
 ## Data
 
 NYC 311 data is local, in MariaDB — database `nyc311_calls`, table `NYC311`
-(22,356,884 rows as of 2026-09-06, InnoDB), with lookup tables `agencies`,
+(22,485,781 rows as of 2026-09-16, InnoDB), with lookup tables `agencies`,
 `community_boards`, `location_types`, `address_types`. Size reads 16.2 GB
 (12.4 data + 3.9 index), but `information_schema` lags a bulk load until
 `ANALYZE TABLE` runs.
@@ -60,7 +60,7 @@ reimported (21,080,417 rows, 37.7 min). Indexes on `Created_Date`, `Problem`,
 
 Dates are correct — `Created_Date` 100% populated, time of day preserved.
 
-Coverage is **2020-01-01 to 2026-09-05**, not 2010 onward. The 2010 start you
+Coverage is **2020-01-01 to 2026-09-15**, not 2010 onward. The 2010 start you
 may see quoted elsewhere is wrong for this dataset; 2020-01-01 is the published
 feed's own minimum, verified against the live API.
 
@@ -192,6 +192,15 @@ resumes correctly; `--resweep` forces windows already recorded. The sweep never
 touches the `:updated_at` watermark. Verified run: 248 windows, 2,698,315 rows,
 1710 s, no splits.
 
+`etl_sweep_progress` is also the record of **what has ever been independently
+verified**. As of 2026-09-16 it holds 257 windows covering 2026-01-01 to
+2026-09-15, in two batches: the 09-06 backfill (249 windows, through 2026-09-06)
+and the 09-16 repair (8 windows, 09-08 through 09-15). **2026-09-07 has never
+been swept** — it falls in the seam between the two, and was checked against the
+API by hand instead (10,623 rows, exact). Everything from 09-07 onward rested
+solely on the `:updated_at` daily path until the 09-16 repair, which is how the
+09-15 loss went unnoticed for a night.
+
 Do not send `$order=unique_key` — it times out against this endpoint (measured
 3× 240 s, versus 0.9 s unordered).
 
@@ -208,10 +217,40 @@ run hits a tie group every time.
 
 Advancing the watermark past rows that were never loaded makes the gap
 permanent: those rows keep their old `:updated_at`, so every later run filters
-them out and reports success. This has now happened twice — once from a capped
-2,000-row test that wrote a full watermark, once from the offset row loss above.
+them out and reports success. This has now happened three times — once from a
+capped 2,000-row test that wrote a full watermark, once from the offset row loss
+above, and once on 2026-09-15 from a silent drain (below).
 Write the watermark only from data actually committed, and reconcile row counts
 against the API before trusting a load.
+
+#### The silent drain, 2026-09-15
+
+Socrata returned **truncated results for the pinned `:updated_at = '...'`
+predicate** — not an error, just short pages. The nightly run under-read twice:
+the `2026-09-15 01:33:25.924` group drained 14,689 rows, and the
+`2026-09-16 01:33:24.809` group drained **0** when it actually held 551,857.
+The loader took both as authoritative, stepped the cursor past with `>`, and
+committed a watermark above the group. 8,197 rows — mostly requests created
+2026-09-13 — became invisible to the cursor for ever. The whole run processed
+126,252 rows against ~578,000 on a normal night.
+
+Caught by `reconcile_counts.py` the same night (`FAIL: DB is short 8213 rows`),
+repaired 2026-09-16 by `created_date` sweep, and now guarded:
+
+`drain_tie_group` is only ever called because the caller just saw a full page
+whose newest row equals the cursor — so the caller already **proved** the group
+is at least that wide. It now passes that count as `expected_at_least`, and a
+drain observing fewer than `expected_at_least - max(5, 1% of page_size)` raises
+`EtlError` and exits non-zero **with the watermark still below the group**. A
+drain observing exactly zero retries 3 times (5 s, 10 s) first, since nothing
+was yielded and re-reading is a clean repeat; any non-zero shortfall aborts
+immediately, because a partial drain has already updated `already_seen` and
+cannot be safely retried. Tolerance is sized against mid-drain churn, not group
+size, and kept tight on purpose: a false abort costs one re-run, a false
+"complete" costs rows permanently.
+
+**A drain that comes back suspiciously small is data loss in progress, not a
+quiet night.** Every healthy drain on this feed returns 495–517 K rows.
 
 ### Scheduled daily load
 

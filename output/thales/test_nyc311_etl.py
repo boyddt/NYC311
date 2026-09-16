@@ -373,6 +373,134 @@ class KeysetPagingTests(unittest.TestCase):
         self.assertEqual(len(keys), len(set(keys)))
 
 
+class TieGroupDrainGuardTests(unittest.TestCase):
+    """Defect 3: a drain that read nothing was believed.
+
+    On 2026-09-15 the pinned re-read of a 551,857-row tie group came back empty
+    — a transient Socrata failure; the identical predicate served the group
+    correctly the next day. The drain reported "0 further rows", the cursor
+    stepped strictly past the stamp, and the watermark went with it. 8,213 rows
+    became invisible to every later run.
+
+    The contradiction is available at the point of failure: the drain only ran
+    because the caller had just read a full page of rows carrying that one
+    stamp, so the group is known to hold at least a page. Anything close to
+    empty is a failed read, not a shrunken group.
+    """
+
+    def setUp(self) -> None:
+        self.sleeps: list[float] = []
+        patcher = mock.patch.object(etl.time, "sleep", self.sleeps.append)
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
+    @staticmethod
+    def tied_source(total: int, tied: int) -> FakeSource:
+        """A source whose `tied` oldest rows all share one :updated_at."""
+        source = FakeSource(total)
+        for key in source.ordered_keys()[:tied]:
+            source.rows[key][":updated_at"] = stamp(EPOCH)
+        return source
+
+    def run_pager(self, source: FakeSource, page_size: int, *,
+                  blank_pinned: int = 0, on_first_pinned=None) -> list[dict[str, Any]]:
+        """Page the source, intervening on the drain's own pinned queries.
+
+        blank_pinned makes the first N pinned reads come back empty, which is
+        the live failure. on_first_pinned runs just before the first pinned read
+        that is actually answered, so a test can re-stamp rows *out* of the
+        group the way a mid-drain edit does.
+        """
+        state = {"pinned": 0}
+
+        def fetch(params, app_token, timeout):
+            if UPDATED_EQUALS.search(params.get("$where", "")):
+                state["pinned"] += 1
+                if state["pinned"] <= blank_pinned:
+                    return []
+                if on_first_pinned and state["pinned"] == blank_pinned + 1:
+                    on_first_pinned(source)
+            return source.fetch(params, app_token, timeout)
+
+        collected: list[dict[str, Any]] = []
+        with mock.patch.object(etl, "fetch_page", fetch):
+            for page in etl.iter_pages(EPOCH - timedelta(days=1), page_size=page_size,
+                                       app_token=None, timeout=30, max_pages=None):
+                collected.extend(page)
+        return collected
+
+    def test_a_drain_that_reads_nothing_aborts_instead_of_stepping_past(self):
+        """The 2026-09-15 failure, reproduced: 300 tied rows, drain returns 0."""
+        source = self.tied_source(400, 300)
+        with self.assertRaises(etl.EtlError) as caught:
+            self.run_pager(source, 100, blank_pinned=99)
+        message = str(caught.exception)
+        self.assertIn("drained only 0 row(s)", message)
+        self.assertIn("at least 100", message)
+
+    def test_an_aborted_drain_consumes_nothing_beyond_the_group(self):
+        """The watermark is `highest` over what was yielded, so this is it.
+
+        Nothing stamped later than the group may reach the caller, or the run
+        would commit a watermark above a group it never read.
+        """
+        source = self.tied_source(400, 300)
+        seen: list[dict[str, Any]] = []
+        with self.assertRaises(etl.EtlError):
+            seen = self.run_pager(source, 100, blank_pinned=99)
+        self.assertTrue(all(row[":updated_at"] <= stamp(EPOCH) for row in seen))
+
+    def test_an_empty_drain_is_retried_before_it_gives_up(self):
+        source = self.tied_source(400, 300)
+        with self.assertRaises(etl.EtlError):
+            self.run_pager(source, 100, blank_pinned=99)
+        self.assertEqual(self.sleeps, [5.0, 10.0], "three attempts, exponential backoff")
+
+    def test_a_transiently_empty_drain_recovers_on_the_retry(self):
+        """Retrying is safe precisely because an empty read yielded nothing."""
+        source = self.tied_source(400, 300)
+        rows = self.run_pager(source, 100, blank_pinned=1)
+        keys = [row["unique_key"] for row in rows]
+        self.assertEqual(set(keys), set(source.rows), "the whole group must still arrive")
+        self.assertEqual(len(keys), len(set(keys)), "and none of it twice")
+        self.assertEqual(self.sleeps, [5.0], "one retry, then success")
+
+    def test_a_slightly_short_drain_is_accepted_as_mid_drain_edits(self):
+        """A row edited during the drain moves to a later stamp and leaves.
+
+        8 of a 105-row group go while it is being read: 97 against the 100 the
+        page proved, inside the 5-row tolerance for a 100-row page. The run must
+        continue, and the 8 must still arrive — later, ahead of the cursor.
+        """
+        source = self.tied_source(200, 105)
+        touched: list[str] = []
+
+        def edit_during_drain(src: FakeSource) -> None:
+            touched.extend(src.ordered_keys()[:8])
+            src.touch(touched)
+
+        with self.assertLogs(etl.LOG, level="WARNING") as logged:
+            rows = self.run_pager(source, 100, on_first_pinned=edit_during_drain)
+        self.assertTrue(any("short of the 100 proven" in line for line in logged.output))
+        self.assertEqual(set(source.rows) - {row["unique_key"] for row in rows}, set(),
+                         "an edited row is met again ahead of the cursor, never lost")
+
+    def test_a_drain_far_short_of_the_page_aborts_even_though_it_is_not_empty(self):
+        """30 rows of a 105-row group cannot vanish mid-drain; that is a bad read."""
+        source = self.tied_source(200, 105)
+
+        def gut_the_group(src: FakeSource) -> None:
+            src.touch(src.ordered_keys()[:30])
+
+        with self.assertRaises(etl.EtlError) as caught:
+            self.run_pager(source, 100, on_first_pinned=gut_the_group)
+        self.assertIn("drained only 75 row(s)", str(caught.exception))
+
+    def test_the_tolerance_is_sized_against_churn_not_against_the_group(self):
+        self.assertEqual(etl.drain_shortfall_tolerance(etl.DEFAULT_PAGE_SIZE), 500)
+        self.assertEqual(etl.drain_shortfall_tolerance(100), etl.DRAIN_SHORTFALL_FLOOR)
+
+
 class WindowSweepTests(unittest.TestCase):
     """The bulk path: created_date windows, one query each, no cursor."""
 

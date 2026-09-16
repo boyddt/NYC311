@@ -1,0 +1,5 @@
+2026-09-16 12:27:27,246 INFO    window 2026-08-29 00:00:00 .. 2026-08-30 00:00:00: 9671 rows
+2026-09-16 12:27:28,017 INFO      upserted 9671 rows (62 affected)
+2026-09-16 12:27:28,037 INFO    window 2026-08-29 00:00:00 .. 2026-08-30 00:00:00 committed (9671 rows; 1 windows, 9671 rows this run)
+2026-09-16 12:27:28,037 INFO    sweep complete: 1 window(s), 9671 rows processed
+2026-09-16 12:27:28,060 INFO    Sweep took 10.7 s
