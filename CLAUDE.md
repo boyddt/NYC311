@@ -316,7 +316,32 @@ not its exit code.
 Note `reconcile_counts.py` exits 0 even when rows are missing, so the wrapper
 reads the shortfall figure it prints rather than trusting its exit status.
 
-Exit codes: 0 ok, 1 loader failed, 2 rows missing, 3 already running.
+**It retries.** A failed night is tried up to 3 times, 2 h apart (~03:00, 05:00
+and 07:00 UTC), because the feed's `:updated_at` faults clear with time — see
+"The empty page" above. Retries happen on exit 1 and 2 only, never on 3: that
+means another copy holds the lock, so retrying is pointless. One `flock` and one
+log file span all attempts, and the feed's newest `:updated_at` is logged per
+attempt — that per-attempt probe caught replica disagreement *within a single
+night* on its first outing (attempt 1 read `2026-09-19 02:11:45`, attempt 2 read
+the day-stale `2026-09-18 02:10:09`, 27 s apart). Override with
+`NYC311_MAX_ATTEMPTS` / `NYC311_RETRY_INTERVAL_SECONDS` for testing; cron sets
+neither.
+
+Consequences worth knowing:
+
+- **A manual run during a retry window gets exit 3 for hours, not minutes.** If
+  a night is failing and you want to intervene at 05:30, run the loader
+  directly — not the wrapper, which will just say "already running".
+- **A suspend, reboot, or killed session ends the pending retry silently.** The
+  process is only sleeping; nothing re-arms it. That night stops at whichever
+  attempt it reached. (Cron itself is independent of any Claude session; a
+  process launched *from* a session is not.)
+- A run starting 21:00 on the last of a month and retrying past midnight logs
+  everything to the **old** month's file. That is the "one night, one story"
+  behaviour, but do not hunt for it under the new month.
+
+Exit codes: 0 ok, 1 loader failed, 2 rows missing, 3 already running — with
+retries, 1 and 2 mean *all* attempts failed. 143/130 if signalled mid-run.
 Logs: `output/plato/nyc311_daily_YYYY-MM.log`.
 
 A normal night is 12–16 K rows in a single page. Verified end to end on

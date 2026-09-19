@@ -12,7 +12,38 @@
 #
 #   0 21 * * *  /home/davidtboyd/Dropbox/Agentics/NYC311/nyc311_daily_update.sh
 #
+# ---------------------------------------------------------------------------
+# Why this retries
+#
+# A failed attempt is retried up to twice, two hours apart: ~03:00, ~05:00 and
+# ~07:00 UTC for the 21:00 MDT trigger.
+#
+# The feed's `:updated_at` filters and aggregates misbehave for a while after
+# NYC publishes the nightly batch — truncated pages, then flatly contradictory
+# answers (CLAUDE.md, "The silent drain" and "The empty page"). Our 21:00 slot
+# sits ~1.5 h behind that batch and failed three nights in four. The one
+# recovery we have actually measured: a manual re-run at 03:36 UTC still failed,
+# and by 04:14 UTC the `$where` path answered correctly again.
+#
+# Waiting is a mitigation, not a diagnosis. The same 21:00 slot ran clean for
+# nine consecutive nights (09-06 through 09-14) before this started, and a
+# day-stale replica reading was seen as well, so the cron offset is not the
+# whole story — the propagation window most likely grew, or replicas desynced,
+# around 09-15. Each attempt therefore logs the feed's newest `:updated_at`
+# (the loader's own unfiltered probe): that measurement, gathered night after
+# night, is what would justify moving the schedule rather than retrying.
+#
+# All attempts run under one flock and write to one log, so a night reads as a
+# single story. Worst case is roughly 4 h of waiting plus three attempts; the
+# next trigger is ~20 h away, so the hold cannot collide with it.
+#
 # Exit codes:  0 ok   1 loader failed   2 rows missing   3 already running
+#
+# With retries in play those describe the LAST attempt: success on any attempt
+# exits 0, and 1 or 2 means every attempt failed, the code being the final
+# attempt's reason. 3 is unchanged and is never retried — another copy holds the
+# lock, so retrying could only wait for a machine already doing the work.
+# An operator signal during a run exits 128+signal (130 SIGINT, 143 SIGTERM).
 
 set -uo pipefail
 
@@ -27,16 +58,60 @@ LOG="$LOG_DIR/nyc311_daily_$(date +%Y-%m).log"
 # drift from the source changing while the comparison runs.
 SHORTFALL_TOLERANCE=1000
 
+# Retry schedule. Overridable only so the retry path can be exercised without
+# sitting through two real hours; cron supplies neither, so the defaults are
+# what actually runs.
+DEFAULT_MAX_ATTEMPTS=3
+DEFAULT_RETRY_INTERVAL_SECONDS=7200          # 2 h, as asked for
+
 cd "$PROJECT_DIR" || exit 1
 mkdir -p "$LOG_DIR"
 
 log() { printf '%s  %s\n' "$(date -Is)" "$*" >> "$LOG"; }
 
-# Failures also go to stderr: cron mails a job's output, not its exit code, so a
-# silent failure is an unnoticed one.
-fail() { log "$*"; printf 'nyc311_daily_update: %s\n  see %s\n' "$*" "$LOG" >&2; }
+# Anything the operator must see goes to stderr as well as the log: cron mails a
+# job's output, not its exit code, so a silent failure is an unnoticed one. Every
+# call site opens with its own FAIL/ABORT/RECOVERED/WARNING word, which is what
+# distinguishes them — not a second copy of this function.
+alert() { log "$*"; printf 'nyc311_daily_update: %s\n  see %s\n' "$*" "$LOG" >&2; }
+
+# An override that is not a plain number would otherwise turn into a sleep that
+# never ends or an attempt loop that never runs. Warn and use the default: the
+# scheduled load must survive a bad environment.
+positive_int_or_default() {
+  local name="$1" value="$2" default="$3" min="$4"
+  if [[ "$value" =~ ^[0-9]+$ ]] && (( value >= min )); then
+    printf '%s' "$value"
+    return
+  fi
+  alert "WARNING: ignoring $name='$value' (want an integer >= $min); using $default"
+  printf '%s' "$default"
+}
+
+MAX_ATTEMPTS="$(positive_int_or_default NYC311_MAX_ATTEMPTS \
+  "${NYC311_MAX_ATTEMPTS:-$DEFAULT_MAX_ATTEMPTS}" "$DEFAULT_MAX_ATTEMPTS" 1)"
+RETRY_INTERVAL_SECONDS="$(positive_int_or_default NYC311_RETRY_INTERVAL_SECONDS \
+  "${NYC311_RETRY_INTERVAL_SECONDS:-$DEFAULT_RETRY_INTERVAL_SECONDS}" \
+  "$DEFAULT_RETRY_INTERVAL_SECONDS" 0)"
+
+attempt=1
+sleep_pid=""
+
+# A multi-hour wait is long enough that being killed in the middle of one is a
+# real possibility. Say so in the log and take the sleeping child down with us,
+# rather than leaving the file to stop mid-sentence.
+on_signal() {
+  local signal="$1" number="$2"
+  trap - TERM INT
+  [[ -n "$sleep_pid" ]] && kill "$sleep_pid" 2>/dev/null
+  alert "ABORT: $signal during attempt $attempt/$MAX_ATTEMPTS — stopping, no further retries"
+  exit $((128 + number))
+}
+trap 'on_signal SIGTERM 15' TERM
+trap 'on_signal SIGINT 2' INT
 
 # Never let a slow run overlap the next trigger: a bulk night can take minutes.
+# The lock is now held across the retry waits too — see the header.
 exec 9>"$LOCK" || exit 1
 if ! flock -n 9; then
   log "SKIP: another run holds $LOCK"
@@ -54,36 +129,99 @@ else
   log "WARNING: no $ENV_FILE — falling back to the throttled shared pool"
 fi
 
-log "--- loader ---"
-"$PYTHON" output/thales/nyc311_etl.py --timeout 300 >> "$LOG" 2>&1
-rc=$?
-if [[ $rc -ne 0 ]]; then
-  fail "FAIL: loader exited $rc"
-  exit 1
-fi
-log "loader ok"
+# How far behind the feed this attempt started. The loader probes for it once
+# per run, unfiltered, before it pages anything — so the first such line written
+# after the loader started is that probe and not a later drain message. Lifting
+# it to its own line puts the measurement next to the attempt banner instead of
+# buried in a few hundred lines of paging.
+report_feed_newest() {
+  local from_line="$1" probe
+  probe="$(sed -n "$((from_line + 1)),\$p" "$LOG" \
+    | grep -m1 -- 'newest :updated_at' \
+    | sed -E 's/^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9:,]+ [A-Z]+ +//')"
+  if [[ -n "$probe" ]]; then
+    log "attempt $attempt/$MAX_ATTEMPTS: $probe"
+  else
+    log "attempt $attempt/$MAX_ATTEMPTS: the loader logged no :updated_at probe — it did not get that far"
+  fi
+}
 
-log "--- reconcile ---"
-# reconcile_counts.py exits 0 even when rows are missing, so read the figure it
-# reports rather than trusting its exit status.
-recon="$("$PYTHON" output/thales/reconcile_counts.py 2>&1)"
-printf '%s\n' "$recon" >> "$LOG"
+# One full attempt: loader, reconcile, shortfall check.
+# Returns the exit code this attempt would give the night: 0 ok, 1 loader
+# failed, 2 rows missing.
+run_attempt() {
+  local loader_start_line rc recon shortfall
 
-shortfall="$(printf '%s' "$recon" \
-  | sed -n 's/.*total DB shortfall across periods: *\(-\{0,1\}[0-9,]*\).*/\1/p' \
-  | tr -d ',' | tail -1)"
+  log "--- attempt $attempt/$MAX_ATTEMPTS: loader ---"
+  loader_start_line="$(wc -l < "$LOG")"
+  "$PYTHON" output/thales/nyc311_etl.py --timeout 300 >> "$LOG" 2>&1
+  rc=$?
+  report_feed_newest "$loader_start_line"
+  if [[ $rc -ne 0 ]]; then
+    alert "FAIL: attempt $attempt/$MAX_ATTEMPTS: loader exited $rc"
+    return 1
+  fi
+  log "attempt $attempt/$MAX_ATTEMPTS: loader ok"
 
-if [[ -z "$shortfall" ]]; then
-  fail "FAIL: could not read shortfall from reconcile output"
-  exit 2
-fi
+  log "--- attempt $attempt/$MAX_ATTEMPTS: reconcile ---"
+  # reconcile_counts.py exits 0 even when rows are missing, so read the figure it
+  # reports rather than trusting its exit status.
+  recon="$("$PYTHON" output/thales/reconcile_counts.py 2>&1)"
+  printf '%s\n' "$recon" >> "$LOG"
 
-if [[ "$shortfall" -gt "$SHORTFALL_TOLERANCE" ]]; then
-  fail "FAIL: DB is short $shortfall rows against the source (tolerance $SHORTFALL_TOLERANCE)"
-  exit 2
-fi
+  shortfall="$(printf '%s' "$recon" \
+    | sed -n 's/.*total DB shortfall across periods: *\(-\{0,1\}[0-9,]*\).*/\1/p' \
+    | tr -d ',' | tail -1)"
 
-# A negative shortfall means the DB holds rows the API no longer serves. The
-# loader has no delete path, so this grows slowly and is expected.
-log "OK: shortfall $shortfall (tolerance $SHORTFALL_TOLERANCE)"
-log "=== done ==="
+  if [[ -z "$shortfall" ]]; then
+    alert "FAIL: attempt $attempt/$MAX_ATTEMPTS: could not read shortfall from reconcile output"
+    return 2
+  fi
+
+  if [[ "$shortfall" -gt "$SHORTFALL_TOLERANCE" ]]; then
+    alert "FAIL: attempt $attempt/$MAX_ATTEMPTS: DB is short $shortfall rows against the source (tolerance $SHORTFALL_TOLERANCE)"
+    return 2
+  fi
+
+  # A negative shortfall means the DB holds rows the API no longer serves. The
+  # loader has no delete path, so this grows slowly and is expected.
+  log "OK: shortfall $shortfall (tolerance $SHORTFALL_TOLERANCE)"
+  return 0
+}
+
+# Sleep so that a signal is acted on immediately: bash defers a trap until a
+# foreground child exits, and waiting two hours to honour a SIGTERM is not
+# waiting at all.
+wait_before_retry() {
+  local seconds="$1"
+  sleep "$seconds" &
+  sleep_pid=$!
+  wait "$sleep_pid"
+  sleep_pid=""
+}
+
+while true; do
+  run_attempt
+  rc=$?
+
+  if [[ $rc -eq 0 ]]; then
+    if [[ $attempt -gt 1 ]]; then
+      alert "RECOVERED: attempt $attempt/$MAX_ATTEMPTS succeeded after $((attempt - 1)) failed attempt(s)"
+    fi
+    log "=== done: ok on attempt $attempt/$MAX_ATTEMPTS ==="
+    exit 0
+  fi
+
+  if [[ $attempt -ge $MAX_ATTEMPTS ]]; then
+    alert "FAIL: all $MAX_ATTEMPTS attempts failed; exiting $rc (last attempt's reason)"
+    log "=== done: failed after $MAX_ATTEMPTS attempts, exit $rc ==="
+    exit $rc
+  fi
+
+  # Say this in full. Someone reading the log at 6am needs to know that the gap
+  # in the timestamps is a deliberate wait and not a hung job.
+  log "--- attempt $attempt/$MAX_ATTEMPTS failed (exit $rc); waiting ${RETRY_INTERVAL_SECONDS}s until about $(date -Is -d "+$RETRY_INTERVAL_SECONDS seconds") before attempt $((attempt + 1))/$MAX_ATTEMPTS. The lock is held throughout, so nothing else can start meanwhile. ---"
+  wait_before_retry "$RETRY_INTERVAL_SECONDS"
+  attempt=$((attempt + 1))
+  log "--- wait over, starting attempt $attempt/$MAX_ATTEMPTS ---"
+done
