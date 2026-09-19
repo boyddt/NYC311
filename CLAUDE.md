@@ -241,7 +241,7 @@ repaired 2026-09-16 by `created_date` sweep, and now guarded:
 whose newest row equals the cursor — so the caller already **proved** the group
 is at least that wide. It now passes that count as `expected_at_least`, and a
 drain observing fewer than `expected_at_least - max(5, 1% of page_size)` raises
-`EtlError` and exits non-zero **with the watermark still below the group**. A
+`EtlError` and exits non-zero without stepping the cursor past the group. A
 drain observing exactly zero retries 3 times (5 s, 10 s) first, since nothing
 was yielded and re-reading is a clean repeat; any non-zero shortfall aborts
 immediately, because a partial drain has already updated `already_seen` and
@@ -251,6 +251,54 @@ size, and kept tight on purpose: a false abort costs one re-run, a false
 
 **A drain that comes back suspiciously small is data loss in progress, not a
 quiet night.** Every healthy drain on this feed returns 495–517 K rows.
+
+Note what actually recovers an aborted group: **the next run's
+`--overlap-hours` re-read, not the watermark.** The stored watermark is *not*
+below the group — the batch that ended on the tie stamp commits its watermark
+before the drain begins, so it sits exactly at it (verified 2026-09-18:
+`etl_watermark.last_updated_at` = `2026-09-19 01:33:25.618`, the very group the
+run refused to drain). Safe, but for a different reason than it looks.
+
+#### The empty page, 2026-09-18
+
+The same Socrata fault escalated: `$where` and aggregate answers over
+`:updated_at` went not just truncated but flatly self-contradictory, measured
+minutes apart on one endpoint —
+
+    count where :updated_at > '2026-09-19T00:33:25.618'      0
+    count where :updated_at = '2026-09-19T01:33:25.618'      537,194
+    rows  where :updated_at = '2026-09-19T01:33:25.618'      []
+    max(:updated_at)                                         2026-09-18T02:10:09Z
+    $order=:updated_at DESC $limit=3                         rows at 2026-09-19T02:11:45Z
+
+The last line is the trustworthy one: the rows exist, and it is the **filters
+and aggregates over `:updated_at` that lie**. A re-run fetched `page 1: 0 rows`,
+concluded it was caught up, and exited 0 while the table sat ~24,000 rows short.
+`reconcile_counts.py` was again the only thing that noticed.
+
+So an empty page is now **verified, not believed**. `confirm_caught_up` probes
+`$select=:updated_at&$order=:updated_at DESC&$limit=1` — deliberately **with no
+`$where`**, because filtering on `:updated_at` is the broken capability and
+using it to check itself would inherit the same wrong answer. A probe newer than
+the cursor aborts the run without writing a watermark.
+
+The probe runs 5 times and the newest answer wins: **the endpoint is served by
+replicas that disagree.** Unfiltered probes seconds apart returned
+`2026-09-19T02:11:45` or a day-stale `2026-09-18T02:10:09` — measured at 2/10
+stale, then 4/8 stale an hour later. A stale answer can only hide a
+contradiction, never invent one, so repeating cannot cause a false abort.
+
+Not covered: partial truncation on a **non-empty** page away from a tie group.
+Those rows keep `:updated_at` values above the committed watermark, so a later
+run can still reach them — unlike the tie-group and empty-page failures, it is
+not usually permanent. `reconcile_counts.py` remains the only backstop.
+
+**When `:updated_at` filters are misbehaving, the `created_date` sweep is the
+way in.** It touches neither `:updated_at` nor the watermark, so it is purely
+additive: it can pull data forward early, but it cannot create a permanent hole.
+When the filters recover, the daily path resumes from the intact watermark and
+picks up every change since, including updates to arbitrarily old records that
+no recent-range sweep would have seen.
 
 ### Scheduled daily load
 

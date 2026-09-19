@@ -44,6 +44,12 @@ Design notes, all of which are load-bearing:
     lt_id and at_id are FOREIGN KEY enforced, so a row carrying an unseen
     agency or location type is rejected outright unless the lookup row exists
     first.
+  * An empty page is not taken at face value. The 2026-09-18 feed answered
+    `$where` and aggregate queries over ``:updated_at`` with values that
+    contradicted the rows it would actually serve, so "page 1: 0 rows" stopped
+    meaning "caught up" and a run reported success ~24,000 rows short. Every
+    zero-row page is now corroborated by an unfiltered ordered probe for the
+    newest ``:updated_at``, and a page that contradicts it raises.
   * The watermark advances only after a batch commits.
   * The run asserts rather than assumes. A batch far outside the expected size
     band, or a date column that arrives empty, exits non-zero. This pipeline's
@@ -120,6 +126,45 @@ DRAIN_SHORTFALL_FLOOR = 5
 # Any other shortfall aborts on the first attempt; correctness beats recovery.
 DRAIN_EMPTY_ATTEMPTS = 3
 DRAIN_RETRY_DELAY = 5.0
+
+# An empty page is the cursor's only signal for "there is nothing left to read",
+# and on 2026-09-18 that signal stopped being trustworthy. The feed began
+# answering `$where` and aggregate queries over :updated_at with values that
+# contradicted its own rows. Measured live, minutes apart, same endpoint:
+#
+#     count where :updated_at > '2026-09-19T00:33:25.618'      ->       0
+#     count where :updated_at = '2026-09-19T01:33:25.618'      -> 537,194
+#     fetch rows where :updated_at = '2026-09-19T01:33:25.618' ->      []
+#     max(:updated_at)                                         -> 2026-09-18T02:10:09.615
+#     $order=:updated_at DESC $limit=3                         -> rows at 2026-09-19T02:11:45.242
+#
+# Those cannot all be true. The last line is the one backed by actual rows; the
+# filtered and aggregated readings of :updated_at are the broken ones. A manual
+# run at 21:36 that day fetched "page 1: 0 rows", reported "run complete: 0 rows
+# processed" and exited 0 while the table was ~24,000 rows short. Only
+# reconcile_counts.py noticed.
+#
+# So an empty page is now corroborated before it is believed, by the one shape
+# that still tells the truth: order plus limit, and deliberately NO $where.
+# Filtering on :updated_at is the broken capability — a filtered check would
+# inherit the same wrong answer and confirm the bug to itself. That is the
+# entire value of this probe; do not "simplify" it into a filtered query.
+#
+# One probe is not conclusive. Ten identical unfiltered probes on 2026-09-18
+# came back 8x 2026-09-19T02:11:45.242 and 2x a stale 2026-09-18T02:10:09.615,
+# so roughly a fifth of requests are served by a replica missing the newest
+# batch. A stale answer can only make this check miss a real contradiction,
+# never invent one, so the probe is repeated and the newest answer wins: at a
+# measured 20% stale rate, five probes miss on the order of once in 3,000 runs
+# where one probe would miss one run in five. They cost almost nothing — 8 of
+# those 10 returned in under a second, the slowest in 8 s — and only an empty
+# page pays for them at all.
+NEWEST_PROBE_ATTEMPTS = 5
+NEWEST_PROBE_PARAMS = {
+    "$select": ":updated_at",
+    "$order": ":updated_at DESC",
+    "$limit": "1",
+}
 
 # Transient failures worth another attempt. OSError covers urllib's URLError
 # (a subclass) *and* the bare TimeoutError that http.client raises from
@@ -322,6 +367,99 @@ def socrata_stamp(moment: datetime) -> str:
 SELECT_ALL_FIELDS = ",".join([":updated_at", *FIELD_MAP.keys(), "location"])
 
 
+def fetch_newest_updated_at(*, app_token: str | None, timeout: int,
+                            probes: int = 1) -> datetime | None:
+    """The newest :updated_at the feed will admit to, asked without any filter.
+
+    Sends `$select=:updated_at`, `$order=:updated_at DESC`, `$limit=1` and
+    nothing else. The absence of a `$where` is the whole point, and is asserted
+    by the tests rather than left to a reader's good intentions — see the note
+    at NEWEST_PROBE_ATTEMPTS for why a filtered check would be worthless here.
+
+    The probe is repeated `probes` times and the newest answer wins, because the
+    endpoint currently serves some requests from a lagging replica. Returns None
+    only if every probe came back with no row at all.
+    """
+    if probes < 1:
+        raise EtlError(f"newest-:updated_at probe count must be positive, got {probes}")
+    answers: list[datetime | None] = []
+    for _ in range(probes):
+        page = fetch_page(dict(NEWEST_PROBE_PARAMS), app_token, timeout)
+        record = page[0] if page else {}
+        answers.append(parse_timestamp(record.get(":updated_at"), ":updated_at"))
+    if len(set(answers)) > 1:
+        LOG.warning("the feed gave %d different answers to the same unfiltered "
+                    "newest-:updated_at probe (%s); taking the newest",
+                    len(set(answers)), ", ".join(str(answer) for answer in answers))
+    present = [answer for answer in answers if answer is not None]
+    return max(present) if present else None
+
+
+def confirm_caught_up(cursor: datetime, *, app_token: str | None, timeout: int) -> None:
+    """Refuse to read an empty page as "caught up" until the feed corroborates it.
+
+    Called for every zero-row page, first or last. If the feed's own newest row
+    is strictly newer than the cursor, then a correct server would have returned
+    it and the empty page is the API contradicting itself — a failed read, not
+    the end of the data. That raises, so the run exits non-zero and no watermark
+    is written for rows nothing ever read. If the newest row is at or below the
+    cursor, there genuinely is nothing left and the run returns normally.
+    """
+    newest = fetch_newest_updated_at(app_token=app_token, timeout=timeout,
+                                     probes=NEWEST_PROBE_ATTEMPTS)
+    if newest is None:
+        raise EtlError(
+            f"the cursor at {cursor} read an empty page, and {NEWEST_PROBE_ATTEMPTS} "
+            f"unfiltered probes ($select=:updated_at, $order=:updated_at DESC, "
+            f"$limit=1, no $where) returned no row at all. A feed of this size cannot "
+            f"be empty, so \"caught up\" cannot be confirmed — and it will not be "
+            f"assumed. Aborting without writing a watermark; re-run once the endpoint "
+            f"answers an unordered, unfiltered read."
+        )
+    if newest > cursor:
+        raise EtlError(
+            f"the cursor at {cursor} read an empty page, but an unfiltered probe "
+            f"($select=:updated_at, $order=:updated_at DESC, $limit=1, no $where) "
+            f"shows the feed holds rows updated at {newest}, which is newer. A server "
+            f"answering correctly would have returned them, so the empty page "
+            f"contradicts the feed's own data: this is a failed read, not the end of "
+            f"the data. On 2026-09-18 exactly this cost a run ~24,000 rows, which it "
+            f"reported as success. Aborting without writing a watermark for rows that "
+            f"were never read; re-run once :updated_at filters answer correctly."
+        )
+    LOG.info("empty page confirmed: the feed's newest :updated_at is %s, not past the "
+             "cursor at %s — genuinely caught up", newest, cursor)
+
+
+def log_upstream_newest(cursor: datetime, *, app_token: str | None, timeout: int) -> datetime | None:
+    """Log how far behind the feed the run is starting, once per run.
+
+    One unfiltered probe, logged at INFO, so "how far behind is the feed?" can be
+    read straight out of cron mail instead of reconstructed with curl. This is
+    reporting, not a check: a probe that fails must not fail a load that is
+    otherwise healthy, so transport trouble is logged and swallowed here. The
+    same probe is used for correctness in confirm_caught_up, where it is
+    emphatically not swallowed.
+    """
+    try:
+        newest = fetch_newest_updated_at(app_token=app_token, timeout=timeout)
+    except (*TRANSIENT_ERRORS, EtlError) as exc:
+        LOG.warning("could not read the feed's newest :updated_at (%s: %s)",
+                    type(exc).__name__, exc)
+        return None
+    if newest is None:
+        LOG.warning("the feed reported no newest :updated_at at all")
+        return None
+    if newest >= cursor:
+        LOG.info("feed newest :updated_at %s (one unfiltered probe); reading from %s, "
+                 "so %s of changes to cover", newest, cursor, newest - cursor)
+    else:
+        LOG.info("feed newest :updated_at %s (one unfiltered probe); reading from %s, "
+                 "which is %s ahead of it — a lagging replica or a quiet feed, and one "
+                 "probe cannot tell them apart", newest, cursor, cursor - newest)
+    return newest
+
+
 def iter_pages(
     since: datetime,
     *,
@@ -352,8 +490,15 @@ def iter_pages(
     on fewer — a drain that comes back near-empty raises rather than letting the
     watermark move over rows nothing ever read.
 
+    An empty page never ends the run on its own. It is the only "nothing left"
+    signal there is, and on 2026-09-18 the feed started producing it while
+    holding rows the cursor had not seen, so every zero-row page is put to
+    confirm_caught_up first: an unfiltered probe for the feed's newest
+    :updated_at, which raises if it is past the cursor.
+
     max_pages counts requests made by this cursor, not rows or batches; a drain
-    yields its own batches without consuming the allowance.
+    yields its own batches without consuming the allowance, and neither does the
+    empty-page confirmation.
     """
     page_number = 0
     cursor = since
@@ -376,6 +521,10 @@ def iter_pages(
         LOG.info("page %d: %d rows, %d new (:updated_at %s %s)",
                  page_number, len(page), len(fresh), comparison, socrata_stamp(cursor))
         if not page:
+            # Never a plain "caught up": see confirm_caught_up. This raises
+            # rather than returns when the feed's own newest row is past the
+            # cursor, which is what an empty page looked like on 2026-09-18.
+            confirm_caught_up(cursor, app_token=app_token, timeout=timeout)
             return
         if len(page) < page_size:
             if fresh:
@@ -518,7 +667,14 @@ def drain_tie_group(
     only shrink by the handful of rows edited during the drain itself. A small
     shortfall is therefore a note; a large one is not a shrunken group, it is a
     read that failed silently, and it raises EtlError so the run exits non-zero
-    with the watermark still below this stamp. On 2026-09-15 a drain of a
+    without the cursor ever stepping past this stamp. The stored watermark is
+    not below the stamp when that happens — write_watermark runs per committed
+    batch, so the batch that ended on this stamp already banked it (verified
+    2026-09-18: etl_watermark.last_updated_at was 2026-09-19 01:33:25.618, the
+    very group the drain refused). It is still safe, because the next run
+    re-reads from the watermark minus --overlap-hours and meets the group again;
+    the safety comes from that overlap, not from the watermark staying put. On
+    2026-09-15 a drain of a
     551,857-row group read back 0 rows, was believed, and cost 8,213 rows that
     no later cursor run could see.
     """
@@ -558,9 +714,14 @@ def drain_tie_group(
         raise EtlError(
             f"tie group at {moment} drained only {observed} row(s), but the cursor page "
             f"proved it holds at least {expected_at_least} (tolerance {tolerance}). "
-            f"The group cannot have shrunk that far, so the read failed. Aborting with "
-            f"the watermark below {moment}; re-run once the API serves "
-            f":updated_at = '{socrata_stamp(moment)}' completely."
+            f"The group cannot have shrunk that far, so the read failed. Aborting "
+            f"without stepping the cursor past {moment}, and without banking anything "
+            f"at or beyond that stamp. Note the stored watermark is NOT below "
+            f"{moment}: the batch that ended on this stamp committed its watermark "
+            f"before the drain began, so the watermark sits at it. What recovers this "
+            f"group is the next run's --overlap-hours re-read, not the watermark. "
+            f"Re-run once the API serves :updated_at = '{socrata_stamp(moment)}' "
+            f"completely."
         )
     if observed < expected_at_least:
         LOG.warning("tie group at %s drained %d row(s), %d short of the %d proven — within "
@@ -841,6 +1002,10 @@ def run(args: argparse.Namespace) -> int:
             watermark = stored - timedelta(hours=args.overlap_hours)
             LOG.info("stored watermark %s, re-reading from %s (overlap %d h)",
                      stored, watermark, args.overlap_hours)
+
+        # One unfiltered probe per run, purely so the log says how far behind
+        # the feed the run is starting. confirm_caught_up re-asks for itself.
+        log_upstream_newest(watermark, app_token=args.app_token, timeout=args.timeout)
 
         highest = watermark
         for page in iter_pages(

@@ -39,9 +39,10 @@ class FakeSource:
     """An in-memory stand-in for the Socrata endpoint.
 
     Understands the two `$where` shapes the loader emits, plus `$order`,
-    `$limit` and `$offset`. `touch()` re-stamps rows the way a real edit does:
-    the row keeps its created_date and moves to the end of the :updated_at
-    ordering.
+    `$limit` and `$offset`, and the unfiltered newest-first probe the loader
+    sends to corroborate an empty page. `touch()` re-stamps rows the way a real
+    edit does: the row keeps its created_date and moves to the end of the
+    :updated_at ordering.
     """
 
     def __init__(self, count: int, *, spread: timedelta = timedelta(minutes=1),
@@ -62,6 +63,7 @@ class FakeSource:
             }
         self.clock = EPOCH + spread * count
         self.calls = 0
+        self.probes: list[dict[str, str]] = []
 
     # -- source-side mutation ------------------------------------------------
     def touch(self, keys: list[str]) -> None:
@@ -80,6 +82,16 @@ class FakeSource:
         where = params.get("$where", "")
         limit = int(params["$limit"])
         offset = int(params.get("$offset", 0))
+
+        if not where:
+            # The empty-page confirmation: no filter at all, newest first.
+            assert params.get("$order") == ":updated_at DESC", (
+                f"an unfiltered request must be the newest-first probe: {params!r}")
+            self.probes.append(dict(params))
+            newest_first = sorted(self.rows.values(),
+                                  key=lambda r: (r[":updated_at"], r["unique_key"]),
+                                  reverse=True)
+            return [{":updated_at": r[":updated_at"]} for r in newest_first[:limit]]
 
         updated = UPDATED_AFTER.search(where)
         window = CREATED_WINDOW.search(where)
@@ -499,6 +511,247 @@ class TieGroupDrainGuardTests(unittest.TestCase):
     def test_the_tolerance_is_sized_against_churn_not_against_the_group(self):
         self.assertEqual(etl.drain_shortfall_tolerance(etl.DEFAULT_PAGE_SIZE), 500)
         self.assertEqual(etl.drain_shortfall_tolerance(100), etl.DRAIN_SHORTFALL_FLOOR)
+
+
+class EmptyPageVerificationTests(unittest.TestCase):
+    """Defect 4: an empty page was read as "caught up" while rows were waiting.
+
+    On 2026-09-18 the feed answered `$where` and aggregate queries over
+    :updated_at with values contradicting the rows it would actually serve:
+    `count where :updated_at > '2026-09-19T00:33:25.618'` returned 0 while
+    `$order=:updated_at DESC $limit=3` returned real rows stamped
+    2026-09-19T02:11:45.242. A run fetched "page 1: 0 rows", logged "run
+    complete: 0 rows processed" and exited 0, ~24,000 rows short.
+
+    Ordering plus a limit still answers truthfully, so that — with no `$where`
+    at all — is what an empty page is now checked against.
+    """
+
+    CURSOR = datetime(2026, 9, 19, 0, 33, 25, 618000)
+
+    def stub(self, pages: list[list[dict[str, Any]]], newest: list[str | None]):
+        """A fetch_page that serves `pages` to the cursor and `newest` to probes.
+
+        `newest` is consumed one entry per probe request, so a test can make the
+        feed flap between a fresh and a stale answer the way the live endpoint
+        does. None stands for a probe that comes back with no row at all.
+        """
+        cursor_pages = list(pages)
+        probe_answers = list(newest)
+        captured: dict[str, list] = {"probes": [], "cursor": []}
+
+        def next_answer():
+            """One answer per probe; the last one repeats once they run out."""
+            if not probe_answers:
+                return None
+            return probe_answers.pop(0) if len(probe_answers) > 1 else probe_answers[0]
+
+        def fetch(params, app_token, timeout):
+            if "$where" in params:
+                captured["cursor"].append(dict(params))
+                return cursor_pages.pop(0) if cursor_pages else []
+            captured["probes"].append(dict(params))
+            answer = next_answer()
+            return [{":updated_at": answer}] if answer is not None else []
+
+        self.captured = captured
+        return fetch
+
+    def page(self, count: int, *, at: datetime) -> list[dict[str, Any]]:
+        return [{"unique_key": f"{900000 + i}", "created_date": stamp(at),
+                 ":updated_at": stamp(at)} for i in range(count)]
+
+    def drain(self, fetch, *, page_size: int = 100, since: datetime | None = None):
+        with mock.patch.object(etl, "fetch_page", fetch):
+            return [row for page in etl.iter_pages(since or self.CURSOR,
+                                                   page_size=page_size, app_token=None,
+                                                   timeout=30, max_pages=None)
+                    for row in page]
+
+    def test_an_empty_page_with_newer_rows_upstream_aborts(self):
+        """The 2026-09-18 failure: page 1 empty, feed newer than the cursor."""
+        fetch = self.stub([[]], ["2026-09-19T02:11:45.242Z"])
+        with self.assertRaises(etl.EtlError) as caught:
+            self.drain(fetch)
+        message = str(caught.exception)
+        self.assertIn("read an empty page", message)
+        self.assertIn("2026-09-19 02:11:45.242000", message)
+        self.assertIn("without writing a watermark", message)
+
+    def test_an_empty_page_with_upstream_at_the_cursor_is_genuinely_caught_up(self):
+        fetch = self.stub([[]], [stamp(self.CURSOR) + "Z"])
+        with self.assertLogs(etl.LOG, level="INFO") as logged:
+            self.assertEqual(self.drain(fetch), [], "a true empty page ends the run")
+        self.assertTrue(any("genuinely caught up" in line for line in logged.output))
+
+    def test_an_empty_page_with_upstream_below_the_cursor_is_caught_up(self):
+        fetch = self.stub([[]], ["2026-09-18T02:10:09.615Z"])
+        self.assertEqual(self.drain(fetch), [])
+
+    def test_the_confirmation_query_carries_no_where_clause(self):
+        """Filtering on :updated_at is the broken capability being checked.
+
+        A confirmation that filtered would inherit the same wrong answer and
+        confirm the bug to itself, so the absence of $where is load-bearing.
+        """
+        fetch = self.stub([[]], ["2026-09-18T02:10:09.615Z"])
+        self.drain(fetch)
+        self.assertTrue(self.captured["probes"], "an empty page must be confirmed")
+        for probe in self.captured["probes"]:
+            self.assertNotIn("$where", probe, "the probe must not filter on :updated_at")
+            self.assertEqual(probe["$select"], ":updated_at")
+            self.assertEqual(probe["$order"], ":updated_at DESC")
+            self.assertEqual(probe["$limit"], "1")
+            self.assertNotIn("$offset", probe)
+
+    def test_every_empty_page_is_verified_not_only_the_first(self):
+        """A mid-run empty page is the same lie, told later."""
+        full = self.page(100, at=self.CURSOR + timedelta(minutes=1))
+        fetch = self.stub([full, []], ["2026-09-19T02:11:45.242Z"])
+        with self.assertRaises(etl.EtlError) as caught:
+            self.drain(fetch, page_size=100)
+        self.assertIn("2026-09-19 00:34", str(caught.exception),
+                      "the cursor in the message is the mid-run one, not the start")
+
+    def test_a_probe_that_returns_no_row_at_all_aborts(self):
+        fetch = self.stub([[]], [None])
+        with self.assertRaises(etl.EtlError) as caught:
+            self.drain(fetch)
+        self.assertIn("returned no row at all", str(caught.exception))
+
+    def test_the_newest_answer_wins_when_the_feed_flaps(self):
+        """Measured live 2026-09-18: identical probes alternated fresh/stale.
+
+        Some requests are served by a replica missing the newest batch. A stale
+        answer may only hide a contradiction, never invent one, so the probe is
+        repeated and the newest answer decides.
+        """
+        stale = "2026-09-18T02:10:09.615Z"
+        fetch = self.stub([[]], [stale, "2026-09-19T02:11:45.242Z", stale])
+        with self.assertRaises(etl.EtlError):
+            self.drain(fetch)
+        self.assertEqual(len(self.captured["probes"]), etl.NEWEST_PROBE_ATTEMPTS)
+
+    def test_a_flapping_probe_is_logged(self):
+        stale = "2026-09-18T02:10:09.615Z"
+        fetch = self.stub([[]], [stale, "2026-09-19T02:11:45.242Z", stale])
+        with self.assertLogs(etl.LOG, level="WARNING") as logged:
+            with self.assertRaises(etl.EtlError):
+                self.drain(fetch)
+        self.assertTrue(any("different answers to the same unfiltered" in line
+                            for line in logged.output))
+
+    def test_a_short_page_still_ends_the_run_without_a_probe(self):
+        """The check is scoped to zero-row pages; a short page is unchanged."""
+        fetch = self.stub([self.page(3, at=self.CURSOR + timedelta(minutes=1))], [])
+        rows = self.drain(fetch, page_size=100)
+        self.assertEqual(len(rows), 3)
+        self.assertEqual(self.captured["probes"], [], "a short page is not an empty page")
+
+    def test_a_probe_count_below_one_is_refused(self):
+        with self.assertRaises(etl.EtlError):
+            etl.fetch_newest_updated_at(app_token=None, timeout=30, probes=0)
+
+
+class UpstreamNewestLogTests(unittest.TestCase):
+    """Every run says how far behind the feed it is starting."""
+
+    def probe(self, answer: str | None):
+        def fetch(params, app_token, timeout):
+            self.params = dict(params)
+            return [{":updated_at": answer}] if answer is not None else []
+        return fetch
+
+    def test_the_lag_is_logged_at_info_on_an_ordinary_run(self):
+        with mock.patch.object(etl, "fetch_page", self.probe("2026-09-19T02:11:45.242Z")):
+            with self.assertLogs(etl.LOG, level="INFO") as logged:
+                newest = etl.log_upstream_newest(datetime(2026, 9, 19, 0, 33, 25),
+                                                 app_token=None, timeout=30)
+        self.assertEqual(newest, datetime(2026, 9, 19, 2, 11, 45, 242000))
+        self.assertTrue(any("feed newest :updated_at 2026-09-19 02:11:45.242000" in line
+                            for line in logged.output))
+        self.assertNotIn("$where", self.params)
+
+    def test_a_cursor_ahead_of_the_feed_reads_sensibly(self):
+        with mock.patch.object(etl, "fetch_page", self.probe("2026-09-18T02:10:09.615Z")):
+            with self.assertLogs(etl.LOG, level="INFO") as logged:
+                etl.log_upstream_newest(datetime(2026, 9, 19, 0, 33, 25),
+                                        app_token=None, timeout=30)
+        self.assertTrue(any("ahead of it" in line for line in logged.output))
+
+    def test_a_failing_probe_warns_but_does_not_fail_the_run(self):
+        """Reporting must not be able to kill a load that is otherwise fine."""
+        def explode(params, app_token, timeout):
+            raise TimeoutError("read timed out")
+
+        with mock.patch.object(etl, "fetch_page", explode):
+            with self.assertLogs(etl.LOG, level="WARNING") as logged:
+                self.assertIsNone(etl.log_upstream_newest(EPOCH, app_token=None, timeout=30))
+        self.assertTrue(any("could not read the feed" in line for line in logged.output))
+
+
+class WatermarkNotWrittenTests(unittest.TestCase):
+    """The point of the check: an unconfirmed empty page banks nothing."""
+
+    class Connection:
+        """Enough of pymysql for run(): no watermark row, records every statement."""
+
+        def __init__(self) -> None:
+            self.executed: list[str] = []
+            self.committed = 0
+            self.rolled_back = 0
+            self.closed = False
+
+        def cursor(self):
+            connection = self
+
+            class Cursor:
+                def __enter__(self):
+                    return self
+
+                def __exit__(self, *exc):
+                    return False
+
+                def execute(self, sql, params=()):
+                    connection.executed.append(sql)
+
+                def fetchone(self):
+                    return None            # no stored watermark
+
+            return Cursor()
+
+        def commit(self):
+            self.committed += 1
+
+        def rollback(self):
+            self.rolled_back += 1
+
+        def close(self):
+            self.closed = True
+
+    def args(self, **overrides):
+        args = etl.parse_args(["--page-size", "100"])
+        args.app_token = None
+        for name, value in overrides.items():
+            setattr(args, name, value)
+        return args
+
+    def test_an_unconfirmed_empty_page_writes_no_watermark(self):
+        connection = self.Connection()
+        pages = [[], [{":updated_at": "2026-09-19T02:11:45.242Z"}]]
+
+        def fetch(params, app_token, timeout):
+            return [] if "$where" in params else list(pages[1])
+
+        with mock.patch.object(etl, "connect", lambda *a, **k: connection):
+            with mock.patch.object(etl, "fetch_page", fetch):
+                self.assertEqual(etl.main(["--page-size", "100"]), 1)
+
+        self.assertFalse([sql for sql in connection.executed if "etl_watermark" in sql
+                          and sql.strip().upper().startswith("INSERT")],
+                         "no watermark may be written for rows that were never read")
+        self.assertEqual(connection.rolled_back, 1)
+        self.assertTrue(connection.closed)
 
 
 class WindowSweepTests(unittest.TestCase):
