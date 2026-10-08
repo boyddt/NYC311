@@ -327,6 +327,18 @@ the day-stale `2026-09-18 02:10:09`, 27 s apart). Override with
 `NYC311_MAX_ATTEMPTS` / `NYC311_RETRY_INTERVAL_SECONDS` for testing; cron sets
 neither.
 
+**A night that fails every attempt notifies.** The wrapper sends a critical
+desktop notification (`notify-send`, with the user bus address set explicitly
+because cron has no session) and writes `output/plato/nyc311_daily_FAILED`. The
+next successful night removes that marker, so **its existence means the latest
+night is unresolved** — check it if you were away from the screen. A
+notification failure never changes the exit code. There is no MTA on this
+machine, so cron's stderr mail most likely goes nowhere; the notification and
+marker are the real signal. Intermediate failures that a retry recovers do not
+notify. Since 2026-09-18 about 13 of 31 nights hit a feed fault and 4 failed
+outright (09-18, 09-29, 09-30, 10-04), each healed by a later run's overlap
+re-read.
+
 Consequences worth knowing:
 
 - **A manual run during a retry window gets exit 3 for hours, not minutes.** If
