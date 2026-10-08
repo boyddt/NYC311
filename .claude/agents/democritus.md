@@ -183,3 +183,8 @@ path when you report back, so Plato can find them.
 
 Keep data extracts out of Dropbox if they are large — this project folder is
 synced.
+
+Writing standards: before you write a document, README, data dictionary, code
+review or report, read `Writing_Standards.md` in the project root and follow
+section 1 plus the section for that document type. CLAUDE.md, "Writing
+standards", has the summary.

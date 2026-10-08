@@ -21,3 +21,6 @@ venv/
 
 # Rotating operational logs from the daily cron job (one-off run logs are kept)
 output/plato/nyc311_daily_*.log
+
+# Personal writing standards: holds a private email address and career details
+Writing_Rules_Export.md

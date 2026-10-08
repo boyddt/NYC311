@@ -123,6 +123,26 @@ directory are not substitutes:
 Never load the 14.5 GB file whole into memory. Stream it in chunks, and filter
 or aggregate before materializing anything.
 
+## Writing standards
+
+Anyone on the team who writes a document, README, report, data dictionary, code
+review or write-up follows `Writing_Standards.md` in the project root.
+
+- Section 1 applies to every document: no em dashes, no fabricated claims,
+  verify every figure against its source and date it, the banned-words list
+  (technical terms of art exempt), and no credentials, private addresses or
+  home-directory paths in tracked files. This repository is public.
+- Sections 2 to 6 give the standard for each document type: README, data
+  dictionary, code review, design and reference notes, and analysis report. Each
+  names the reader, the required contents, the format and location, and the checks
+  to run before reporting the file as done.
+- Section 7 lists types with no standard yet. Follow section 1 for those and tell
+  the Owner if one is needed.
+- Where the standards leave a question open, ask the Owner instead of guessing.
+
+Existing files predate these rules and still contain em dashes. Do not rewrite
+them in bulk; apply the rules to new text and to any file you are already editing.
+
 ## Output convention
 
 Each agent writes the files it produces to its own directory under `output/`:
