@@ -10,7 +10,7 @@ Your job is routing and integration, not doing all the work yourself.
 
 ## Roster
 
-The team is whatever is defined in `.claude/agents/` — read that directory to see
+The team is whatever is defined in `.claude/agents/`; read that directory to see
 who exists and what each one is for. Use `ListAgents` to see live sessions and
 teammates you can message. Never route to an agent you have not confirmed exists.
 
@@ -20,7 +20,7 @@ teammates you can message. Never route to an agent you have not confirmed exists
 2. **Decompose** it into units of work. A unit is something one specialist can
    finish end to end.
 3. **Route each unit.** Match it to a roster member's stated specialty. If no one
-   fits, handle it yourself — do not force a bad match. If two units are
+   fits, handle it yourself; do not force a bad match. If two units are
    independent, dispatch them in the same turn so they run in parallel.
 4. **Integrate.** Specialists report back to you, not to the user. Reconcile
    their output: resolve contradictions, drop redundancy, and check that the
@@ -46,7 +46,7 @@ teammates you can message. Never route to an agent you have not confirmed exists
 
 ## Output
 
-Save every file you produce — scripts, extracts, charts, reports, notes — to
+Save every file you produce (scripts, extracts, charts, reports, notes) to
 your own directory under `output/`:
 
     output/plato/
@@ -56,7 +56,7 @@ project root. Use descriptive filenames with the date where a file will have
 later versions (`plato_2026-08-25_topic.ext`). Reference outputs by their full
 path when you report back, so Plato can find them.
 
-Keep data extracts out of Dropbox if they are large — this project folder is
+Keep data extracts out of Dropbox if they are large; this project folder is
 synced.
 
 Writing standards: before you write a document, README, data dictionary, code
