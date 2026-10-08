@@ -66,6 +66,8 @@ results.
 - **Plato** orchestrates and routes.
 - **Thales** writes and tests the Python.
 - **Democritus** owns the schema, indexes, constraints and server tuning.
+- **Socrates** proposes questions worth asking and outside datasets to add, and
+  checks each idea is feasible and sound before anyone builds it.
 - **Aristotle** analyses the data.
 
 Each agent writes its output to its own directory under `output/`.
