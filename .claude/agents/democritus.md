@@ -88,26 +88,21 @@ Remaining, none urgent:
 1. `X_Coordinate_State_Plane` / `Y_Coordinate_State_Plane` are `varchar` and
    need casting; `BBL` is a `double` where it should be an identifier;
    `Incident_Zip` is `varchar(255)`. Import artifacts from the original schema.
-2. Coverage starts 2020-01-01, the published feed's own minimum, not a filter on
-   our export. Read the end of the range with `SELECT MAX(Created_Date) FROM
-   NYC311`.
+2. Coverage: see CLAUDE.md, "Data". Read the end of the range with `SELECT
+   MAX(Created_Date) FROM NYC311`.
 3. `information_schema` size and row figures lag a bulk load. Run
    `ANALYZE TABLE` after one, and do not quote `table_rows` as a count.
 
-## The 2026-09-06 backfill, and what it cost
+## Lessons from the 2026-09-06 backfill
 
-The table had drifted four months stale. 1.27 M rows were pulled from the
-Socrata API to bring it current. Two lessons, both expensive:
+CLAUDE.md has the full account, under "Never page a large sweep with `$offset`" and
+"A watermark must be earned". The two rules that follow from it:
 
-- **`$offset` paging silently loses rows.** Paging by offset over
-  `:updated_at`-ordered results, while NYC keeps updating records, lets rows
-  re-sort behind the cursor and never be returned. It skipped 20,566 rows, with
-  the shortfall growing by recency (August worst at −9,161). No error was
-  raised. Sweep large ranges by narrow `created_date` windows so each query is a
-  single page.
-- **Reconcile against the source, not against the absence of errors.** Every
-  orphan check passed and every load committed cleanly while the table was
-  20,566 rows short. Only a count-by-year comparison against the API found it.
+- Never page a large sweep with `$offset` over `:updated_at` order; it silently
+  loses rows. Sweep by narrow `created_date` windows.
+- Reconcile against the source, not against the absence of errors. A load can
+  commit cleanly and pass every orphan check while the table is thousands of rows
+  short.
 
 ## Rules
 
@@ -117,8 +112,8 @@ rewrites `NYC311` in place: state exactly what you intend to run and what it
 affects, and get agreement first. Never improvise one mid-task because it seemed
 convenient.
 
-- Rehearse on `NYC311_TEST` or a `LIMIT`ed copy before touching the 21 M-row
-  table.
+- Rehearse on a `LIMIT`ed copy, or a scratch table made from `SHOW CREATE TABLE`,
+  before touching the full table.
 - Verify a backup exists before any operation that loses data. A `mysqldump` of
   this table is slow; prefer a copy of the table over hoping.
 - `EXPLAIN` (or `ANALYZE FORMAT=JSON`) before optimizing, and again after. Never
@@ -137,12 +132,9 @@ convenient.
 
 ## Imports
 
-The canonical source is
-`/home/davidtboyd/Dropbox/Data Science Projects/Datasets/NYC311/311_Service_Requests.csv`
-(14.5 GB, UTF-8, quoted fields, original NYC column names, dates as
-`05/09/2026 02:32:59 AM`). Load from this file, not from `311_Sample_50.csv`
-(UTF-7, ISO dates, known bad) and not from `311_Sample.csv` except as a quick
-fixture.
+Load from the canonical CSV that CLAUDE.md, "Source data", names, not from the
+sample files it rules out. The file is UTF-8 with quoted fields, original NYC
+column names, and dates as `05/09/2026 02:32:59 AM`.
 
 - `LOAD DATA LOCAL INFILE` with a column list and user variables, parsing
   through `STR_TO_DATE(@created, '%m/%d/%Y %h:%i:%s %p')`; verified against the

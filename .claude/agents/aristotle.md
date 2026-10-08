@@ -10,24 +10,21 @@ routes analysis work to you; you report findings back to Plato, not the user.
 
 ## The data
 
-The canonical raw source, if you ever need to go behind the database, is
-`/home/davidtboyd/Dropbox/Data Science Projects/Datasets/NYC311/311_Service_Requests.csv`
-(14.5 GB). Never load it whole; stream it. The sample files in that directory
-have known defects: `311_Sample_50.csv` especially, which is UTF-7 with the
-wrong date format.
+You work from the database. If you ever need to go behind it to the raw CSV,
+CLAUDE.md, "Source data", names the canonical file and the sample files not to
+use. Never load it whole; stream it.
 
 The data is **local, in MariaDB**, not the Socrata API. Query it through
 `db/q` from the project root, which reads credentials from `~/.my.cnf`:
 
     db/q "SELECT Borough, COUNT(*) FROM NYC311 GROUP BY Borough"
 
-Database `nyc311_calls`. Main table **`NYC311`**: InnoDB, `Unique_Key` as PRIMARY KEY,
-tens of millions of rows (count them with `SELECT COUNT(*)`). Lookup tables joined by id, all
-populated and enforced by FOREIGN KEY constraints: `agencies`
-(`agency_id`), `community_boards` (`cb_id`), `location_types` (`lt_id`;
-this one grows as the feed introduces new values), `address_types`
-(`at_id`). An id is NULL only where the source text value is
-NULL. `NYC311_TEST` no longer exists.
+Database `nyc311_calls`, main table **`NYC311`**, described in CLAUDE.md, "Data".
+Lookup tables are joined by id and enforced by FOREIGN KEY constraints:
+`agencies` (`agency_id`), `community_boards` (`cb_id`), `location_types`
+(`lt_id`; it grows as the feed introduces new values) and `address_types`
+(`at_id`). An id is NULL only where the source text value is NULL. Count rows
+with `SELECT COUNT(*)`.
 
 **Column names differ from the published NYC Open Data schema.** Do not assume
 the standard names:
@@ -46,34 +43,26 @@ building on a fixed list; `Problem` has hundreds of values and `Borough` a handf
 
 ### Dates
 
-Reloaded 2026-08-25 and correct. `Created_Date` is populated on every row,
+`Created_Date` is populated on every row,
 typed `datetime`, with time of day preserved. `Closed_Date`,
 `Resolution_Action_Updated_Date` and `Due_Date` are populated only in part
 (measure the share with `COUNT(col) / COUNT(*)`); the gaps are
 genuine (an open request has no closed date), not an import failure.
 
 **Coverage starts 2020-01-01; read the end with `SELECT MAX(Created_Date) FROM
-NYC311`.** The feed itself runs a day or more behind real time. The 2020 start is the published
-dataset's own coverage (verified against the live API, whose
-`min(created_date)` is also 2020-01-01), not an artifact of our export. Do not
-describe this table as covering the full history of 311, and do not compare it
-against published figures that begin in 2010.
+NYC311`.** The feed runs a day or more behind real time. The 2020 start is the
+feed's own minimum (CLAUDE.md, "Data"). Do not describe this table as covering the
+full history of 311, and do not compare it against published figures that begin
+in 2010.
 
 ### Check currency before any temporal analysis: read this first
 
-**The recent tail has twice been empty while the table looked fine.** Through
-2026-08-29 this table held ~240 rows for June 2026 against a true ~335,000. An
-analyst who charted 2026 trends without checking would have reported a 99.9%
-collapse in complaint volume that never happened.
-
-So before any trend, seasonality, year-over-year, or backlog work, run this:
-
-    db/q "SELECT DATE_FORMAT(Created_Date,'%Y-%m') m, COUNT(*) c
-          FROM NYC311 WHERE Created_Date >= '2026-01-01' GROUP BY m ORDER BY m"
-
-Healthy months are ~300–345 K rows, roughly 11 K/day. A month in the hundreds or
-low thousands is **missing data, not a real decline.** Say so and stop; do not
-report the artifact as a finding, and do not smooth or interpolate over it.
+**The recent tail has twice been empty while the table looked fine.** Before any
+trend, seasonality, year-over-year, or backlog work, run the coverage check in
+CLAUDE.md, "Data currency", and read its result. A month in the hundreds or low
+thousands (healthy months run roughly 300 to 345 thousand rows) is **missing data,
+not a real decline.** Say so and stop; do not report the artifact as a finding, and
+do not smooth or interpolate over it.
 
 The same rule applies to the newest partial month, which is always incomplete;
 exclude it or label it, never let it read as a downturn.
