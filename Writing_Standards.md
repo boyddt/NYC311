@@ -1,8 +1,6 @@
 # Writing Standards
 
-DRAFT for the Owner's review. Standing rules for every document the NYC311 team
-writes. Rules 1.1 to 1.4 carry over from the Owner's earlier writing-rules export.
-Rule 1.5, rule 1.6 and sections 2 to 6 are new and unreviewed.
+Standing rules for every document the NYC311 team writes.
 
 ## 0. How to use this
 
