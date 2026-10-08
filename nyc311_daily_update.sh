@@ -53,6 +53,9 @@ PYTHON=/home/davidtboyd/PycharmProjects/EAD_venv/.venv/bin/python
 LOCK=/tmp/nyc311_daily_update.lock
 LOG_DIR="$PROJECT_DIR/output/plato"
 LOG="$LOG_DIR/nyc311_daily_$(date +%Y-%m).log"
+# Exists only while the most recent night is unresolved: written when every
+# attempt fails, removed by the next night that succeeds.
+FAILED_MARKER="$LOG_DIR/nyc311_daily_FAILED"
 
 # Rows the DB may be short before this is treated as a real failure rather than
 # drift from the source changing while the comparison runs.
@@ -74,6 +77,23 @@ log() { printf '%s  %s\n' "$(date -Is)" "$*" >> "$LOG"; }
 # call site opens with its own FAIL/ABORT/RECOVERED/WARNING word, which is what
 # distinguishes them — not a second copy of this function.
 alert() { log "$*"; printf 'nyc311_daily_update: %s\n  see %s\n' "$*" "$LOG" >&2; }
+
+# Tell the operator a night failed outright. Two channels, because neither is
+# reliable alone: a desktop notification is missed if nobody is at the screen,
+# and a marker file is only seen if someone looks. cron has no session, so
+# notify-send needs the user bus address spelled out; failing to notify must
+# never change the exit code.
+notify_failed_night() {
+  local message="$1" uid
+  uid="$(id -u)"
+  printf '%s  %s\n' "$(date -Is)" "$message" > "$FAILED_MARKER"
+  if command -v notify-send >/dev/null 2>&1; then
+    DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$uid/bus" \
+      notify-send --urgency=critical --app-name=nyc311 \
+      "NYC311 nightly load FAILED" "$message" 2>/dev/null \
+      || log "WARNING: notify-send failed; the marker $FAILED_MARKER still stands"
+  fi
+}
 
 # An override that is not a plain number would otherwise turn into a sleep that
 # never ends or an attempt loop that never runs. Warn and use the default: the
@@ -208,6 +228,7 @@ while true; do
     if [[ $attempt -gt 1 ]]; then
       alert "RECOVERED: attempt $attempt/$MAX_ATTEMPTS succeeded after $((attempt - 1)) failed attempt(s)"
     fi
+    rm -f "$FAILED_MARKER"
     log "=== done: ok on attempt $attempt/$MAX_ATTEMPTS ==="
     exit 0
   fi
@@ -215,6 +236,7 @@ while true; do
   if [[ $attempt -ge $MAX_ATTEMPTS ]]; then
     alert "FAIL: all $MAX_ATTEMPTS attempts failed; exiting $rc (last attempt's reason)"
     log "=== done: failed after $MAX_ATTEMPTS attempts, exit $rc ==="
+    notify_failed_night "All $MAX_ATTEMPTS attempts failed (exit $rc). See $LOG"
     exit $rc
   fi
 
