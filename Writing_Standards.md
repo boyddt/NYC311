@@ -120,6 +120,27 @@ goes stale without anyone noticing, and the reader acts on it as if it were true
 - Dated reports, reviews and data dictionaries are the exception. There the
   figure is the finding. Give its date and how it was obtained (rule 1.3).
 
+### 1.8 File formats
+Two kinds of file get two formats.
+
+- **Response files** are documents the Owner asked for and will read: idea briefs,
+  feasibility notes, analysis reports, code reviews, summaries. Deliver them as
+  `.docx`.
+- **System files** are files the project runs on or that stand as its
+  documentation: the README, CLAUDE.md, agent definitions, this file, data
+  dictionaries, design and reference notes, and anything a script or agent reads.
+  Keep them Markdown (`.md`), or the file's own format for code, SQL and data.
+- If you cannot tell which a file is, ask: did the Owner request it to read? Then
+  `.docx`. Does the project run on it or refer back to it? Then `.md`.
+- To make a `.docx`, write the content as Markdown in a temporary location outside
+  the project, then convert it:
+  `pandoc draft.md -o output/<name>/<file>.docx`. Images the draft refers to are
+  embedded. Deliver only the `.docx`, so there is one source of truth.
+- Before handoff, run `pandoc -t plain <file>.docx` and confirm the text, tables
+  and figures are all there. If you could not view the file rendered, say so.
+- Rules 1.1 to 1.7 apply to a `.docx` exactly as to Markdown. Existing Markdown
+  reviews and reports predate this rule; do not convert them in bulk.
+
 ---
 
 ## 2. README and top-level documents
@@ -135,8 +156,8 @@ the project is worth their time: a hiring manager, a collaborator, a reviewer.
 4. How to run it, with commands that work.
 5. Status and known limits, stated plainly.
 
-**Format and location.** Markdown. `README.md` at the project root. Headings in
-sentence case. Tables for layout; prose for reasoning.
+**Format and location.** System file (rule 1.8): Markdown. `README.md` at the project
+root. Headings in sentence case. Tables for layout; prose for reasoning.
 
 **Checks before handoff.**
 - Every command in the README ran, and the output matches what it says.
@@ -167,8 +188,8 @@ column holds before using it in a query or a join.
 Start the document with the table's row count and date range, each with its
 measurement date.
 
-**Format and location.** Markdown, one table per database table, in
-`output/democritus/`. Name it `democritus_YYYY-MM-DD_data_dictionary.md`.
+**Format and location.** System file (rule 1.8): Markdown, one table per database
+table, in `output/democritus/`. Name it `democritus_YYYY-MM-DD_data_dictionary.md`.
 
 **Checks before handoff.**
 - Types, nullability, keys and indexes were read from `information_schema` or
@@ -195,8 +216,8 @@ model.
    result), the effect, and a proposed fix.
 4. A closing recommendation: what to do first.
 
-**Format and location.** Markdown in the reviewer's directory under `output/`. Name
-it `<agent>_YYYY-MM-DD_<subject>_review.md`.
+**Format and location.** Response file (rule 1.8): `.docx` in the reviewer's directory
+under `output/`. Name it `<agent>_YYYY-MM-DD_<subject>_review.docx`.
 
 **Checks before handoff.**
 - Each finding says whether it is **confirmed** (you reproduced it) or **inferred**
@@ -205,6 +226,7 @@ it `<agent>_YYYY-MM-DD_<subject>_review.md`.
 - A proposed fix is tested, or marked untested.
 - Code blocks are copied from the source, not retyped.
 - You said what you did not review.
+- The `.docx` shows all the text and code blocks when read back with pandoc (rule 1.8).
 
 ---
 
@@ -220,8 +242,10 @@ later: why the loader pages by `created_date`, what the API returns, how fields 
 3. The reasoning, and the alternatives you rejected with the reason.
 4. Open questions and known limits.
 
-**Format and location.** Markdown in `output/plato/` unless a specialist owns the
-topic. Name it `<agent>_YYYY-MM-DD_<topic>.md`.
+**Format and location.** System file (rule 1.8): Markdown in `output/plato/` unless a
+specialist owns the topic. Name it `<agent>_YYYY-MM-DD_<topic>.md`. An idea brief or
+feasibility note written for the Owner to read is a response file: same contents,
+delivered as `.docx` in the author's directory.
 
 **Checks before handoff.**
 - Each figure has its source and date, or is marked as an estimate.
@@ -246,9 +270,9 @@ the answer, how much to trust it, and how to reproduce it.
 5. Caveats: what the data cannot tell you, and what you did not check.
 6. The queries, so anyone can reproduce the numbers.
 
-**Format and location.** Markdown, with charts as image files beside it, in
-`output/aristotle/`. Name it `aristotle_YYYY-MM-DD_<topic>.md`. Build charts with the
-`dataviz` skill.
+**Format and location.** Response file (rule 1.8): `.docx` in `output/aristotle/`,
+with the charts embedded and the chart images kept beside it. Name it
+`aristotle_YYYY-MM-DD_<topic>.docx`. Build charts with the `dataviz` skill.
 
 **Checks before handoff.**
 - The data-currency check ran, and the report says what it found.
@@ -257,6 +281,7 @@ the answer, how much to trust it, and how to reproduce it.
 - A result that looks like a collapse or a spike was checked against missing data
   before it was reported as a finding.
 - The queries in the report are the ones that produced the figures.
+- The `.docx` shows every table and chart when read back with pandoc (rule 1.8).
 
 ---
 

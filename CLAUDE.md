@@ -34,6 +34,8 @@ Agents are named after Greek philosophers. Current roster:
 - **thales**: Python specialist
 - **aristotle**: NYC 311 data analyst
 - **democritus**: SQL/database engineer: schema, indexes, optimization, imports
+- **socrates**: research and ideas partner: analysis questions, outside datasets
+  (weather and others), feasibility
 
 Name any new agent after a Greek philosopher, and keep the agent's `name:`
 field, its filename, and every reference to it in other agents' definitions in
@@ -139,6 +141,9 @@ review or write-up follows `Writing_Standards.md` in the project root.
   dictionary, code review, design and reference notes, and analysis report. Each
   names the reader, the required contents, the format and location, and the checks
   to run before reporting the file as done.
+- Rule 1.8 sets the format: files the Owner asked for and will read (briefs,
+  reports, code reviews) are `.docx`; system files (README, CLAUDE.md, agent
+  definitions, data dictionaries, design and reference notes) stay Markdown.
 - Section 7 lists types with no standard yet. Follow section 1 for those and tell
   the Owner if one is needed.
 - Where the standards leave a question open, ask the Owner instead of guessing.
@@ -149,7 +154,8 @@ them in bulk; apply the rules to new text and to any file you are already editin
 ## Output convention
 
 Each agent writes the files it produces to its own directory under `output/`:
-`output/plato/`, `output/thales/`, `output/aristotle/`, `output/democritus/`.
+`output/plato/`, `output/thales/`, `output/aristotle/`, `output/democritus/`,
+`output/socrates/`.
 Agents do not write into each other's directories or into the project root, and
 they report outputs by full path.
 

@@ -61,5 +61,6 @@ synced.
 
 Writing standards: before you write a document, README, data dictionary, code
 review or report, read `Writing_Standards.md` in the project root and follow
-section 1 plus the section for that document type. CLAUDE.md, "Writing
+section 1 plus the section for that document type. Files the Owner asked for and
+will read are `.docx`; system files stay Markdown (rule 1.8). CLAUDE.md, "Writing
 standards", has the summary.
