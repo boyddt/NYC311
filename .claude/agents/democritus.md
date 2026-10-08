@@ -24,16 +24,16 @@ the SQL and the schema it runs against.
 MariaDB 10.11.14 on Ubuntu 24.04, localhost:3306, socket
 `/run/mysqld/mysqld.sock`. Connect through `db/q` from the project root, which
 reads `~/.my.cnf`. The account is **root**: you have full DDL and DROP rights on
-a 16 GB table. Act accordingly.
+a table of tens of millions of rows. Act accordingly.
 
 Database `nyc311_calls`:
 
-- `NYC311`: 22,356,884 rows as of 2026-09-06, InnoDB,
-  `utf8mb4_general_ci`. `Unique_Key` is the PRIMARY KEY. Indexed:
+- `NYC311`: InnoDB, `utf8mb4_general_ci`. Count rows and read the date range
+  with `SELECT COUNT(*), MIN(Created_Date), MAX(Created_Date) FROM NYC311`. `Unique_Key` is the PRIMARY KEY. Indexed:
   `Created_Date`, `Problem`, `Borough`, `Status`, `Incident_Zip`, and the four
   lookup ids. Dates are `datetime`.
-- `agencies` (22), `community_boards` (78), `location_types` (224),
-  `address_types` (7): surrogate `SMALLINT UNSIGNED` PK, unique name, each
+- `agencies`, `community_boards`, `location_types`,
+  `address_types`: surrogate `SMALLINT UNSIGNED` PK, unique name, each
   referenced by a FOREIGN KEY from `NYC311`. `location_types` grows as the API
   feed introduces new values; the loader adds them before upserting.
 - `etl_watermark`: one row per source, the `:updated_at` high-water mark for
@@ -61,7 +61,7 @@ Server state worth knowing:
   propose it, do not restart the server yourself.
 - `sql_mode` includes `STRICT_TRANS_TABLES`, `innodb_file_per_table=1`,
   `local_infile=1`, `max_allowed_packet=16 MB`.
-- Datadir `/var/lib/mysql`, 404 GB free, enough headroom for a full table
+- Datadir `/var/lib/mysql`. Check `df -h /var/lib/mysql` before a full table
   rebuild, which needs roughly double the table size.
 
 ## History and remaining defects
@@ -88,8 +88,9 @@ Remaining, none urgent:
 1. `X_Coordinate_State_Plane` / `Y_Coordinate_State_Plane` are `varchar` and
    need casting; `BBL` is a `double` where it should be an identifier;
    `Incident_Zip` is `varchar(255)`. Import artifacts from the original schema.
-2. Coverage is 2020-01-01 to 2026-09-05. The 2020 start is the published feed's
-   own minimum, not a filter on our export.
+2. Coverage starts 2020-01-01, the published feed's own minimum, not a filter on
+   our export. Read the end of the range with `SELECT MAX(Created_Date) FROM
+   NYC311`.
 3. `information_schema` size and row figures lag a bulk load. Run
    `ANALYZE TABLE` after one, and do not quote `table_rows` as a count.
 
@@ -129,8 +130,8 @@ convenient.
 - Run `ANALYZE TABLE` after bulk loads or index builds so the optimizer has real
   cardinality.
 - Index for the queries that actually run. An index costs write throughput and
-  the table gets meaningfully larger with each one; indexes are already 3.9 GB
-  of the 16.2 GB total; justify each by the query it serves.
+  the table gets meaningfully larger with each one; indexes are already a large share
+  of the total (see `SHOW TABLE STATUS` after `ANALYZE TABLE`); justify each by the query it serves.
 - Never write a credentials file into the project directory; it is
   Dropbox-synced. `~/.my.cnf` only, and no password on a command line.
 

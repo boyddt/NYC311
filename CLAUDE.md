@@ -42,10 +42,11 @@ sync when renaming.
 ## Data
 
 NYC 311 data is local, in MariaDB: database `nyc311_calls`, table `NYC311`
-(22,485,781 rows as of 2026-09-16, InnoDB), with lookup tables `agencies`,
-`community_boards`, `location_types`, `address_types`. Size reads 16.2 GB
-(12.4 data + 3.9 index), but `information_schema` lags a bulk load until
-`ANALYZE TABLE` runs.
+(tens of millions of rows, InnoDB), with lookup tables `agencies`,
+`community_boards`, `location_types`, `address_types`. Count rows and read the
+date range with `SELECT COUNT(*), MIN(Created_Date), MAX(Created_Date) FROM
+NYC311`. Size comes from `SHOW TABLE STATUS`, but `information_schema` lags a
+bulk load until `ANALYZE TABLE` runs.
 
 Query through `db/q` from the project root; it reads credentials from
 `~/.my.cnf` (mode 600, deliberately outside this Dropbox-synced folder; never
@@ -60,7 +61,9 @@ reimported (21,080,417 rows, 37.7 min). Indexes on `Created_Date`, `Problem`,
 
 Dates are correct: `Created_Date` 100% populated, time of day preserved.
 
-Coverage is **2020-01-01 to 2026-09-15**, not 2010 onward. The 2010 start you
+Coverage **starts 2020-01-01**, not 2010 (read the end with `SELECT
+MAX(Created_Date) FROM NYC311`; the feed itself runs a day or more behind real
+time). The 2010 start you
 may see quoted elsewhere is wrong for this dataset; 2020-01-01 is the published
 feed's own minimum, verified against the live API.
 
@@ -213,8 +216,9 @@ touches the `:updated_at` watermark. Verified run: 248 windows, 2,698,315 rows,
 1710 s, no splits.
 
 `etl_sweep_progress` is also the record of **what has ever been independently
-verified**. As of 2026-09-16 it holds 257 windows covering 2026-01-01 to
-2026-09-15, in two batches: the 09-06 backfill (249 windows, through 2026-09-06)
+verified**. Query it for the current windows (`SELECT COUNT(*), MIN(window_start),
+MAX(window_start) FROM etl_sweep_progress`). At the 09-16 repair it held two
+batches: the 09-06 backfill (249 windows, through 2026-09-06)
 and the 09-16 repair (8 windows, 09-08 through 09-15). **2026-09-07 has never
 been swept**; it falls in the seam between the two, and was checked against the
 API by hand instead (10,623 rows, exact). Everything from 09-07 onward rested
@@ -355,9 +359,9 @@ night is unresolved**: check it if you were away from the screen. A
 notification failure never changes the exit code. There is no MTA on this
 machine, so cron's stderr mail most likely goes nowhere; the notification and
 marker are the real signal. Intermediate failures that a retry recovers do not
-notify. Since 2026-09-18 about 13 of 31 nights hit a feed fault and 4 failed
-outright (09-18, 09-29, 09-30, 10-04), each healed by a later run's overlap
-re-read.
+notify. A night that fails every attempt is logged as `=== done: failed ...`; list them
+with `grep -h "done: failed" output/plato/nyc311_daily_*.log`. Every one so far
+was healed by a later run's overlap re-read.
 
 Consequences worth knowing:
 
@@ -382,14 +386,14 @@ A normal night is 12–16 K rows in a single page. Verified end to end on
 ### The loader does not delete
 
 It only upserts, so a request NYC withdraws upstream persists in our table
-indefinitely. As of 2026-09-06 that is 8 rows (e.g. `68278287`, `68316007`:
-closed DOT requests the API no longer serves). Harmless at this scale, but it
+indefinitely. It shows as "DB extra" rows in the `reconcile_counts.py` report, a handful
+(e.g. `68278287`, `68316007`: closed DOT requests the API no longer serves). Harmless at this scale, but it
 means our count runs slightly *above* the API's, and closing it needs a
 reconciliation pass, not a loader change.
 
 Full reference, with verified volumes and the API-to-schema field mapping:
 `output/plato/2026-08-26_etl_api_reference.md`. Tests for the loader:
-`output/thales/test_nyc311_etl.py` (64, no network or DB required).
+`output/thales/test_nyc311_etl.py` (no network or DB required).
 
 ### Collation gotcha
 

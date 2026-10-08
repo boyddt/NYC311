@@ -21,12 +21,12 @@ The data is **local, in MariaDB**, not the Socrata API. Query it through
 
     db/q "SELECT Borough, COUNT(*) FROM NYC311 GROUP BY Borough"
 
-Database `nyc311_calls`. Main table **`NYC311`**: 22,356,884 rows as of
-2026-09-06, InnoDB, `Unique_Key` as PRIMARY KEY. Lookup tables joined by id, all
-populated and enforced by FOREIGN KEY constraints: `agencies` (22 rows,
-`agency_id`), `community_boards` (78, `cb_id`), `location_types` (224, `lt_id`;
-this one grows as the feed introduces new values), `address_types` (7,
-`at_id`). An id is NULL only where the source text value is
+Database `nyc311_calls`. Main table **`NYC311`**: InnoDB, `Unique_Key` as PRIMARY KEY,
+tens of millions of rows (count them with `SELECT COUNT(*)`). Lookup tables joined by id, all
+populated and enforced by FOREIGN KEY constraints: `agencies`
+(`agency_id`), `community_boards` (`cb_id`), `location_types` (`lt_id`;
+this one grows as the feed introduces new values), `address_types`
+(`at_id`). An id is NULL only where the source text value is
 NULL. `NYC311_TEST` no longer exists.
 
 **Column names differ from the published NYC Open Data schema.** Do not assume
@@ -36,21 +36,24 @@ the standard names:
 |---|---|
 | `Problem` | Complaint Type |
 | `Problem_Detail` | Descriptor |
-| `Additional_Details` | (extra detail; 37% populated) |
+| `Additional_Details` | (extra detail; sparsely populated) |
 | `Council_Dicharict` | Council District; note the typo, it is in the schema |
 | `Police_Precinct` | e.g. `Precinct 25` |
 
 `Unique_Key` is unique across every row: no duplicate keys.
-`Status` has 8 distinct values, `Problem` 257, `Borough` 6.
+Count the distinct values of a category column (`COUNT(DISTINCT Status)`) before
+building on a fixed list; `Problem` has hundreds of values and `Borough` a handful.
 
 ### Dates
 
 Reloaded 2026-08-25 and correct. `Created_Date` is populated on every row,
-typed `datetime`, with time of day preserved. `Closed_Date`
-98.1%, `Resolution_Action_Updated_Date` 99.2%, `Due_Date` 0.3%; the gaps are
+typed `datetime`, with time of day preserved. `Closed_Date`,
+`Resolution_Action_Updated_Date` and `Due_Date` are populated only in part
+(measure the share with `COUNT(col) / COUNT(*)`); the gaps are
 genuine (an open request has no closed date), not an import failure.
 
-**Coverage is 2020-01-01 to 2026-09-05.** The 2020 start is the published
+**Coverage starts 2020-01-01; read the end with `SELECT MAX(Created_Date) FROM
+NYC311`.** The feed itself runs a day or more behind real time. The 2020 start is the published
 dataset's own coverage (verified against the live API, whose
 `min(created_date)` is also 2020-01-01), not an artifact of our export. Do not
 describe this table as covering the full history of 311, and do not compare it
@@ -75,8 +78,8 @@ report the artifact as a finding, and do not smooth or interpolate over it.
 The same rule applies to the newest partial month, which is always incomplete;
 exclude it or label it, never let it read as a downturn.
 
-46,372 rows (0.22%) have `Closed_Date` before `Created_Date`, and 19,576 (0.09%)
-have a midnight `Created_Date`. Both are source data errors. Exclude them
+A small share of rows has `Closed_Date` before `Created_Date`, and a small share
+has a midnight `Created_Date`. Both are source data errors; measure each. Exclude them
 explicitly and report the count; never clamp them.
 
 ### Performance
@@ -97,9 +100,9 @@ unindexed column still scans the full table.
 
 ### Other populated-field notes
 
-`Latitude`/`Longitude` null on 392,686 rows (1.9%); `X_Coordinate_State_Plane`
+`Latitude`/`Longitude` null on a small share of rows (measure it); `X_Coordinate_State_Plane`
 and `Y_Coordinate_State_Plane` are stored as `varchar` and need casting; `BBL`
-is a `double` (13% null) and should be treated as an identifier, not a number;
+is a `double` (with many nulls) and should be treated as an identifier, not a number;
 `Incident_Zip` is `varchar(255)` and carries the usual dirt.
 
 ## What this data actually measures

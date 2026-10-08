@@ -104,6 +104,22 @@ Credentials, tokens, option files, the Owner's private email address, and home
 directory paths do not go in any tracked file. Refer to `~/.my.cnf` or
 `NYC_APP_TOKEN` by name, never by value. Write paths relative to the project root.
 
+### 1.7 No live figures in standing documents
+A standing document is one people keep reading as the project changes: CLAUDE.md,
+the agent definitions, the README and reference notes. Do not put a figure in one
+if it changes with the data or the system: row counts, the end of a date range,
+table sizes, free disk space, null shares, distinct-value counts, test counts. It
+goes stale without anyone noticing, and the reader acts on it as if it were true.
+
+- Give the query or command that returns the figure instead, for example
+  `SELECT MAX(Created_Date) FROM NYC311`.
+- A range to compare against may stay, written as a range ("healthy months run
+  about 300 to 345 thousand rows"), not as a point.
+- History may stay when it is dated and complete, such as an incident write-up
+  that says what happened on a named day.
+- Dated reports, reviews and data dictionaries are the exception. There the
+  figure is the finding. Give its date and how it was obtained (rule 1.3).
+
 ---
 
 ## 2. README and top-level documents
@@ -124,7 +140,8 @@ sentence case. Tables for layout; prose for reasoning.
 
 **Checks before handoff.**
 - Every command in the README ran, and the output matches what it says.
-- Every count, row total and date was re-measured, or carries its measurement date.
+- It holds no live counts or date ranges (rule 1.7); the commands and figures that
+  remain were checked.
 - No home-directory paths, credentials or private addresses (rule 1.6).
 - It reads correctly to someone who has never seen CLAUDE.md.
 

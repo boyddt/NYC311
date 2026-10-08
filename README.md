@@ -1,7 +1,7 @@
 # NYC311
 
 A local MariaDB warehouse of NYC 311 service requests (2020 to present, about
-22.7 million rows), kept current by a nightly incremental loader that is built
+tens of millions of rows), kept current by a nightly incremental loader that is built
 to distrust the API it reads from.
 
 It is also a working example of a small team of Claude Code agents, each owning
@@ -50,7 +50,7 @@ which doubles as the project's operating manual for the agents.
 |---|---|
 | `output/thales/nyc311_etl.py` | The incremental loader: keyset cursor, tie-group drain, sweep mode |
 | `output/thales/reconcile_counts.py` | Compares the database against the API |
-| `output/thales/test_nyc311_etl.py` | 64 unit tests; need no network or database |
+| `output/thales/test_nyc311_etl.py` | Unit tests; need no network or database |
 | `nyc311_daily_update.sh` | Cron wrapper: lock, load, reconcile, retry, notify |
 | `output/democritus/` | Schema DDL, index builds, lookup tables with foreign keys, verification SQL |
 | `output/plato/` | Design notes and the API-to-schema reference |
