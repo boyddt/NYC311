@@ -369,7 +369,7 @@ reconciliation pass, not a loader change.
 
 Full reference, with verified volumes and the API-to-schema field mapping:
 `output/plato/2026-08-26_etl_api_reference.md`. Tests for the loader:
-`output/thales/test_nyc311_etl.py` (43, no network or DB required).
+`output/thales/test_nyc311_etl.py` (64, no network or DB required).
 
 ### Collation gotcha
 
